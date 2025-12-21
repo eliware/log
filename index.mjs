@@ -11,6 +11,36 @@ export const createLogger = ({
   level = process.env.LOG_LEVEL || 'info',
   transports = [new winston.transports.Console()]
 } = {}) => {
+  // Safe serializer: shallowly summarize objects without invoking toJSON/getters
+  const safeSerialize = (obj) => {
+    try {
+      if (obj === null) return null;
+      if (typeof obj !== 'object') return obj;
+      const out = {};
+      for (const k of Object.keys(obj)) {
+        try {
+          const v = obj[k];
+          if (v === null) { out[k] = null; continue; }
+          if (typeof v === 'object') {
+            const info = { type: v && v.constructor && v.constructor.name ? v.constructor.name : 'Object' };
+            try { if ('id' in v && (typeof v.id === 'string' || typeof v.id === 'number')) info.id = v.id; } catch (e) {}
+            try { if ('name' in v && typeof v.name === 'string') info.name = v.name; } catch (e) {}
+            out[k] = info;
+          } else if (typeof v === 'function') {
+            out[k] = `[Function: ${v.name || 'anonymous'}]`;
+          } else {
+            out[k] = v;
+          }
+        } catch (e) {
+          out[k] = '[Unserializable]';
+        }
+      }
+      return out;
+    } catch (e) {
+      try { return String(obj); } catch (ee) { return '[Unserializable]'; }
+    }
+  };
+
   const logger = winston.createLogger({
     level,
     format: winston.format.printf(({ level, message, ...meta }) => {
@@ -27,7 +57,24 @@ export const createLogger = ({
           }
           return value;
         };
-        msg += ' ' + JSON.stringify(Object.fromEntries(metaKeys.map(k => [k, meta[k]])), replacer);
+        // Build a safe meta object to avoid invoking toJSON on library objects
+        const safeMeta = {};
+        for (const k of metaKeys) {
+          try {
+            safeMeta[k] = safeSerialize(meta[k]);
+          } catch (e) {
+            safeMeta[k] = '[Unserializable]';
+          }
+        }
+        try {
+          msg += ' ' + JSON.stringify(safeMeta, replacer);
+        } catch (e) {
+          try {
+            msg += ' ' + String(safeMeta);
+          } catch (ee) {
+            msg += ' [Unserializable meta]';
+          }
+        }
       }
       return msg;
     }),
