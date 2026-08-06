@@ -13,3 +13,10 @@
 - `1.1.2` — Version 1.1.2 - 12-21-2025.
 - `1.1.3` — Version 1.1.3 - 12-21-2025.
 - `1.1.4` — Version 1.1.4 - 07-01-2026.
+
+
+## 1.1.6
+
+- Added the standardized Oxlint command.
+- Updated package metadata and lockfiles for the latest maintenance pass.
+- Synchronized the package with the current Eliware Node.js 26 workflow conventions.
