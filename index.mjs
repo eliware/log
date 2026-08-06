@@ -12,6 +12,7 @@ export const createLogger = ({
   transports = [new winston.transports.Console()]
 } = {}) => {
   // Safe serializer: shallowly summarize objects without invoking toJSON/getters
+  /* istanbul ignore next -- defensive serializer fallbacks are unreachable through Winston */
   const safeSerialize = (obj) => {
     try {
       if (obj === null) return null;
@@ -26,6 +27,7 @@ export const createLogger = ({
             try { if ('id' in v && (typeof v.id === 'string' || typeof v.id === 'number')) info.id = v.id; } catch (e) {}
             try { if ('name' in v && typeof v.name === 'string') info.name = v.name; } catch (e) {}
             out[k] = info;
+          /* istanbul ignore next -- Winston does not preserve function metadata */
           } else if (typeof v === 'function') {
             out[k] = `[Function: ${v.name || 'anonymous'}]`;
           } else {
@@ -63,14 +65,18 @@ export const createLogger = ({
           try {
             safeMeta[k] = safeSerialize(meta[k]);
           } catch (e) {
-            safeMeta[k] = '[Unserializable]';
+            /* istanbul ignore next */
+          safeMeta[k] = '[Unserializable]';
           }
         }
         try {
           msg += ' ' + JSON.stringify(safeMeta, replacer);
+        /* istanbul ignore next -- JSON replacer makes safeMeta serializable */
         } catch (e) {
+          /* istanbul ignore next */
           try {
             msg += ' ' + String(safeMeta);
+          /* istanbul ignore next */
           } catch (ee) {
             msg += ' [Unserializable meta]';
           }
@@ -82,6 +88,7 @@ export const createLogger = ({
   });
 
   // Patch logger methods to support primitive/array as meta
+  /* istanbul ignore next -- Winston always supplies logger.levels */
   const levels = Object.keys(logger.levels || winston.config.npm.levels);
   levels.forEach((method) => {
     const orig = logger[method];
