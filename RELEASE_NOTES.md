@@ -20,3 +20,11 @@
 - Added the standardized Oxlint command.
 - Updated package metadata and lockfiles for the latest maintenance pass.
 - Synchronized the package with the current Eliware Node.js 26 workflow conventions.
+
+## 1.1.8
+
+- Removed legacy CommonJS entry points and tests in favor of ESM.
+- Added structured JSON logging, timestamps, error serialization, redaction, and child logger context.
+- Expanded logger tests to 100% coverage across statements, branches, functions, and lines.
+- Updated TypeScript declarations, README documentation, package metadata, and dependencies.
+- Added manual GitHub Actions workflow dispatch support.
