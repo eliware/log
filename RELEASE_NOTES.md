@@ -28,3 +28,12 @@
 - Expanded logger tests to 100% coverage across statements, branches, functions, and lines.
 - Updated TypeScript declarations, README documentation, package metadata, and dependencies.
 - Added manual GitHub Actions workflow dispatch support.
+
+## 1.1.9
+
+- Removed all Istanbul coverage-ignore directives.
+- Removed unreachable circular-reference and Winston-level fallback logic.
+- Simplified metadata serialization while preserving redaction, error, BigInt, function, and hostile-object handling.
+- Exported `safeSerialize` for focused testing and reuse.
+- Expanded serializer tests to cover defensive paths directly.
+- Restored 100% statements, branches, functions, and lines coverage without ignore directives.
