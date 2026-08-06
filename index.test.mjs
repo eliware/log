@@ -11,7 +11,14 @@ const makeLogger = () => {
 };
 
 test('createLogger defaults and returns a logger', () => {
+  const previous = process.env.LOG_LEVEL;
+  process.env.LOG_LEVEL = 'debug';
   expect(createLogger()).toBeDefined();
+  if (previous === undefined) delete process.env.LOG_LEVEL; else process.env.LOG_LEVEL = previous;
+  const defaultLevel = process.env.LOG_LEVEL;
+  delete process.env.LOG_LEVEL;
+  expect(createLogger()).toBeDefined();
+  if (defaultLevel === undefined) delete process.env.LOG_LEVEL; else process.env.LOG_LEVEL = defaultLevel;
   expect(createLogger({ level: 'debug', transports: [] }).info).toEqual(expect.any(Function));
 });
 
@@ -24,7 +31,7 @@ test('exports refer to the configured logger', () => {
 });
 
 test('formats primitive, null, array, object, function, bigint and circular metadata', async () => {
-  const { logger, output } = makeLogger();
+  const { logger } = makeLogger();
   const circular = {}; circular.self = circular;
   logger.info('values', 123);
   logger.info('null', null);
@@ -50,4 +57,20 @@ test('covers serializer fallbacks and all levels', () => {
   logger.info('object-meta', {});
   logger.info('undefined-meta', undefined);
   expect(logger.info).toEqual(expect.any(Function));
+});
+
+test('supports JSON output, timestamps, error details, redaction, and child context', async () => {
+  const stream = new PassThrough(); let output = '';
+  stream.on('data', chunk => { output += chunk.toString(); });
+  const logger = createLogger({ format: 'json', timestamp: true, redactKeys: ['token'], transports: [new winston.transports.Stream({ stream })] });
+  logger.child({ requestId: 'r1' }).error('failed', { token: 'secret', error: new Error('boom') });
+  await new Promise(resolve => setImmediate(resolve));
+  const record = JSON.parse(output.trim());
+  expect(record.requestId).toBe('r1');
+  expect(record.token).toBe('[REDACTED]');
+  expect(record.error.message).toBe('boom');
+  expect(record.timestamp).toBeDefined();
+
+  const noTimestamp = createLogger({ format: 'json', transports: [new winston.transports.Stream({ stream: new PassThrough() })] });
+  expect(noTimestamp).toEqual(expect.any(Object));
 });

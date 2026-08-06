@@ -10,12 +10,15 @@
  */
 export declare function createLogger(options?: {
   level?: string;
-  transports?: any[];
+  transports?: import('winston').Transport[];
+  format?: 'text' | 'json';
+  timestamp?: boolean;
+  redactKeys?: string[];
 }): import('winston').Logger & {
-  debug(message: string, meta?: any): void;
-  info(message: string, meta?: any): void;
-  warn(message: string, meta?: any): void;
-  error(message: string, meta?: any): void;
+  debug(message: string, meta?: unknown): void;
+  info(message: string, meta?: unknown): void;
+  warn(message: string, meta?: unknown): void;
+  error(message: string, meta?: unknown): void;
   // ...other winston log levels if needed
 };
 
@@ -26,10 +29,10 @@ export declare function createLogger(options?: {
  * where primitives/arrays are wrapped as { value: ... }.
  */
 export declare const log: import('winston').Logger & {
-  debug(message: string, meta?: any): void;
-  info(message: string, meta?: any): void;
-  warn(message: string, meta?: any): void;
-  error(message: string, meta?: any): void;
+  debug(message: string, meta?: unknown): void;
+  info(message: string, meta?: unknown): void;
+  warn(message: string, meta?: unknown): void;
+  error(message: string, meta?: unknown): void;
   // ...other winston log levels if needed
 };
 export default log;

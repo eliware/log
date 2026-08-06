@@ -2,7 +2,7 @@
 
 ## @eliware/log [![npm version](https://img.shields.io/npm/v/@eliware/log.svg)](https://www.npmjs.com/package/@eliware/log) [![license](https://img.shields.io/github/license/eliware/log.svg)](LICENSE) [![build status](https://github.com/eliware/log/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eliware/log/actions)
 
-> A minimal, flexible logging library for Node.js, built on top of [winston](https://github.com/winstonjs/winston). Supports both ESM and CommonJS, with TypeScript types included.
+> A minimal, flexible logging library for Node.js, built on top of [winston](https://github.com/winstonjs/winston). Supports ESM, with TypeScript types included.
 
 ---
 
@@ -12,8 +12,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
   - [ESM Example](#esm-example)
-  - [CommonJS Example](#commonjs-example)
-- [API](#api)
+  - [API](#api)
 - [TypeScript](#typescript)
 - [Support](#support)
 - [License](#license)
@@ -23,9 +22,13 @@
 
 - Simple, consistent logging API for Node.js
 - Built on [winston](https://github.com/winstonjs/winston)
-- Supports both ESM and CommonJS
+- Supports ESM
 - Default and named exports for maximum flexibility
 - TypeScript type definitions included
+- Supports structured JSON output with optional timestamps
+- Supports child loggers with persistent context
+- Serializes Error objects with name, message, and stack
+- Supports configurable metadata redaction
 - **Supports logging primitives and arrays as meta:**
   - `log.info('msg', 42)` logs `{ value: 42 }`
   - `log.info('msg', [1,2,3])` logs `{ value: [1,2,3] }`
@@ -51,25 +54,6 @@ log.info('Array value', [1,2,3]); // array value
 namedLog.info('Hello from example.mjs (named import)', { foo: 'bar' });
 namedLog.info('Primitive value', 'test'); // primitive value
 
-const customLogger = createLogger({ level: 'debug' });
-customLogger.debug('Custom logger debug message', { custom: true });
-customLogger.debug('Primitive debug', true); // primitive value
-```
-
-### CommonJS Example
-
-```js
-// Example usage for CommonJS
-const log = require('@eliware/log');
-log.info('Hello from example.cjs (default require)', { foo: 'bar' });
-log.info('Primitive value', 42); // primitive value
-log.info('Array value', [1,2,3]); // array value
-
-const namedLog = require('@eliware/log');
-namedLog.info('Hello from example.cjs (named require)', { foo: 'bar' });
-namedLog.info('Primitive value', 'test'); // primitive value
-
-const { createLogger } = require('@eliware/log');
 const customLogger = createLogger({ level: 'debug' });
 customLogger.debug('Custom logger debug message', { custom: true });
 customLogger.debug('Primitive debug', true); // primitive value

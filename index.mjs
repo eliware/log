@@ -9,23 +9,28 @@ import winston from 'winston';
  */
 export const createLogger = ({
   level = process.env.LOG_LEVEL || 'info',
-  transports = [new winston.transports.Console()]
+  transports = [new winston.transports.Console()],
+  format = 'text',
+  timestamp = false,
+  redactKeys = []
 } = {}) => {
   // Safe serializer: shallowly summarize objects without invoking toJSON/getters
   /* istanbul ignore next -- defensive serializer fallbacks are unreachable through Winston */
   const safeSerialize = (obj) => {
     try {
       if (obj === null) return null;
+      if (obj instanceof Error) return { name: obj.name, message: obj.message, stack: obj.stack };
       if (typeof obj !== 'object') return obj;
       const out = {};
       for (const k of Object.keys(obj)) {
         try {
+          if (redact.has(k.toLowerCase())) { out[k] = '[REDACTED]'; continue; }
           const v = obj[k];
           if (v === null) { out[k] = null; continue; }
           if (typeof v === 'object') {
             const info = { type: v && v.constructor && v.constructor.name ? v.constructor.name : 'Object' };
-            try { if ('id' in v && (typeof v.id === 'string' || typeof v.id === 'number')) info.id = v.id; } catch (e) {}
-            try { if ('name' in v && typeof v.name === 'string') info.name = v.name; } catch (e) {}
+            try { if ('id' in v && (typeof v.id === 'string' || typeof v.id === 'number')) info.id = v.id; } catch {}
+            try { if ('name' in v && typeof v.name === 'string') info.name = v.name; } catch {}
             out[k] = info;
           /* istanbul ignore next -- Winston does not preserve function metadata */
           } else if (typeof v === 'function') {
@@ -33,19 +38,29 @@ export const createLogger = ({
           } else {
             out[k] = v;
           }
-        } catch (e) {
+        } catch {
           out[k] = '[Unserializable]';
         }
       }
       return out;
-    } catch (e) {
-      try { return String(obj); } catch (ee) { return '[Unserializable]'; }
+    } catch {
+      try { return String(obj); } catch { return '[Unserializable]'; }
     }
   };
 
+  const redact = new Set(redactKeys.map(key => String(key).toLowerCase()));
+  const sanitize = winston.format((info) => {
+    for (const key of Object.keys(info)) {
+      if (key === 'level' || key === 'message') continue;
+      info[key] = redact.has(key.toLowerCase()) ? '[REDACTED]' : safeSerialize(info[key]);
+    }
+    return info;
+  });
   const logger = winston.createLogger({
     level,
-    format: winston.format.printf(({ level, message, ...meta }) => {
+    format: format === 'json'
+      ? winston.format.combine(sanitize(), ...(timestamp ? [winston.format.timestamp()] : []), winston.format.json())
+      : winston.format.printf(({ level, message, ...meta }) => {
       let msg = `[${level.toUpperCase()}] ${message}`;
       const metaKeys = Object.keys(meta).filter(k => k !== 'level' && k !== 'message');
       if (metaKeys.length > 0) {
@@ -54,6 +69,7 @@ export const createLogger = ({
         const replacer = (key, value) => {
           if (typeof value === 'bigint') return value.toString() + 'n';
           if (typeof value === 'object' && value !== null) {
+            /* istanbul ignore next -- safeSerialize removes nested cycles before JSON serialization */
             if (seen.has(value)) return '[Circular]';
             seen.add(value);
           }
@@ -64,7 +80,7 @@ export const createLogger = ({
         for (const k of metaKeys) {
           try {
             safeMeta[k] = safeSerialize(meta[k]);
-          } catch (e) {
+          } catch {
             /* istanbul ignore next */
           safeMeta[k] = '[Unserializable]';
           }
@@ -72,12 +88,12 @@ export const createLogger = ({
         try {
           msg += ' ' + JSON.stringify(safeMeta, replacer);
         /* istanbul ignore next -- JSON replacer makes safeMeta serializable */
-        } catch (e) {
+        } catch {
           /* istanbul ignore next */
           try {
             msg += ' ' + String(safeMeta);
           /* istanbul ignore next */
-          } catch (ee) {
+          } catch {
             msg += ' [Unserializable meta]';
           }
         }
