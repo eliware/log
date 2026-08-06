@@ -1,4 +1,4 @@
-import log, { log as namedLog, createLogger } from './index.mjs';
+import log, { log as namedLog, createLogger, safeSerialize } from './index.mjs';
 import { jest, test, expect } from '@jest/globals';
 import { PassThrough } from 'node:stream';
 import winston from 'winston';
@@ -73,4 +73,19 @@ test('supports JSON output, timestamps, error details, redaction, and child cont
 
   const noTimestamp = createLogger({ format: 'json', transports: [new winston.transports.Stream({ stream: new PassThrough() })] });
   expect(noTimestamp).toEqual(expect.any(Object));
+});
+
+test('safeSerialize covers function and hostile objects', () => { expect(safeSerialize({ fn: function () {} }).fn).toBe('[Function: fn]'); const hostile = new Proxy({}, { ownKeys() { throw new Error('bad'); } }); expect(safeSerialize(hostile)).toBe('[Unserializable]'); });
+
+test('safeSerialize handles all primitive and object forms directly', () => {
+  expect(safeSerialize(null)).toBeNull();
+  expect(safeSerialize(3)).toBe(3);
+  expect(safeSerialize(new Error('boom')).message).toBe('boom');
+  expect(safeSerialize({ token: 'secret' }, new Set(['token']))).toEqual({ token: '[REDACTED]' });
+  expect(safeSerialize({ nil: null, value: 'ok', nested: { id: 7, name: 'n' }, fn: () => {} })).toMatchObject({ nil: null, value: 'ok', nested: { id: 7, name: 'n' }, fn: '[Function: fn]' });
+  const anonymous = function () {}; Object.defineProperty(anonymous, 'name', { value: '' }); expect(safeSerialize({ anonymous }).anonymous).toBe('[Function: anonymous]');
+  expect(safeSerialize({ noCtor: Object.create(null) }).noCtor.type).toBe('Object');
+  const badId = new Proxy({}, { has() { throw new Error('id'); } });
+  const badName = new Proxy({}, { has() { throw new Error('name'); } });
+  expect(safeSerialize({ badId, badName })).toBeDefined();
 });
