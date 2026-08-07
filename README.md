@@ -33,6 +33,10 @@
   - `log.info('msg', 42)` logs `{ value: 42 }`
   - `log.info('msg', [1,2,3])` logs `{ value: [1,2,3] }`
 
+## Requirements
+
+- Node.js 26 or newer
+
 ## Installation
 
 ```bash
@@ -106,6 +110,24 @@ export declare const log: import('winston').Logger & {
 };
 export default log;
 ```
+
+## Errors / Troubleshooting
+
+Use `redactKeys` for sensitive metadata. JSON output includes timestamps only when `timestamp: true`; text output safely summarizes objects and serializes BigInt values. Configure transports explicitly for tests and alternate destinations.
+
+## Development
+
+```bash
+npm test
+npm run test:gaps
+npm run lint
+npm run typecheck
+npm run pack
+```
+
+## Security
+
+Do not log secrets or sensitive payloads. Configure `redactKeys` for credential-bearing metadata and review custom transports before enabling them.
 
 ## Support
 

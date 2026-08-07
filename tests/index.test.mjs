@@ -1,4 +1,4 @@
-import log, { log as namedLog, createLogger, safeSerialize } from './index.mjs';
+import log, { log as namedLog, createLogger, safeSerialize } from '../index.mjs';
 import { jest, test, expect } from '@jest/globals';
 import { PassThrough } from 'node:stream';
 import winston from 'winston';
