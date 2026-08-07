@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.1.10
+
+- Improved the coverage-gap filter to report only files with uncovered metrics.
+
 ## 1.1.5 — Current changes
 
 - Standardized Node.js 26 CI workflow.
