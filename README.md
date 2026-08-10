@@ -99,17 +99,23 @@ Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
 Type definitions are included:
 
 ```ts
-export declare function createLogger(options?: { level?: string; transports?: any[]; }): import('winston').Logger & {
-  debug(message: string, meta?: any): void;
-  info(message: string, meta?: any): void;
-  warn(message: string, meta?: any): void;
-  error(message: string, meta?: any): void;
+export declare function createLogger(options?: {
+  level?: string;
+  transports?: import('winston').Transport[];
+  format?: 'text' | 'json';
+  timestamp?: boolean;
+  redactKeys?: string[];
+}): import('winston').Logger & {
+  debug(message: string, meta?: unknown): void;
+  info(message: string, meta?: unknown): void;
+  warn(message: string, meta?: unknown): void;
+  error(message: string, meta?: unknown): void;
 };
 export declare const log: import('winston').Logger & {
-  debug(message: string, meta?: any): void;
-  info(message: string, meta?: any): void;
-  warn(message: string, meta?: any): void;
-  error(message: string, meta?: any): void;
+  debug(message: string, meta?: unknown): void;
+  info(message: string, meta?: unknown): void;
+  warn(message: string, meta?: unknown): void;
+  error(message: string, meta?: unknown): void;
 };
 export default log;
 ```

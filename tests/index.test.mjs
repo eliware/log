@@ -70,6 +70,10 @@ test('supports JSON output, timestamps, error details, redaction, and child cont
   expect(record.token).toBe('[REDACTED]');
   expect(record.error.message).toBe('boom');
   expect(record.timestamp).toBeDefined();
+  const childStream = new PassThrough(); let childOutput = ''; childStream.on('data', chunk => { childOutput += chunk.toString(); });
+  createLogger({ format: 'json', transports: [new winston.transports.Stream({ stream: childStream })] }).child({ requestId: 'r2' }).info('primitive', 42);
+  await new Promise(resolve => setImmediate(resolve));
+  expect(JSON.parse(childOutput.trim()).value).toBe(42);
 
   const noTimestamp = createLogger({ format: 'json', transports: [new winston.transports.Stream({ stream: new PassThrough() })] });
   expect(noTimestamp).toEqual(expect.any(Object));
@@ -92,6 +96,10 @@ test('safeSerialize handles all primitive and object forms directly', () => {
 
 test('safeSerialize preserves arrays and redacts error fields', () => {
   expect(safeSerialize([1, { id: 2 }])).toEqual([1, { id: 2 }]);
+  expect(safeSerialize([{ token: 'secret' }], new Set(['token']))).toEqual([{ token: '[REDACTED]' }]);
   const error = new Error('secret');
   expect(safeSerialize(error, new Set(['message'])).message).toBe('[REDACTED]');
+  const hostile = new Error('boom');
+  Object.defineProperty(hostile, 'stack', { get() { throw new Error('stack'); } });
+  expect(safeSerialize(hostile).stack).toBe('[Unserializable]');
 });
