@@ -1,5 +1,13 @@
 # Release Notes
 
+## 1.1.12 — August 10, 2026
+
+- Hardened Error serialization against throwing property accessors.
+- Preserved arrays during metadata serialization, including nested redaction.
+- Added redaction coverage for Error fields and child logger primitive metadata.
+- Updated serializer and troubleshooting documentation.
+
+
 ## 1.1.11 — August 7, 2026
 
 - Aligned repository layout, scripts, CI, documentation, and package contents with Eliware library conventions.
