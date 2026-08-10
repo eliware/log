@@ -89,3 +89,9 @@ test('safeSerialize handles all primitive and object forms directly', () => {
   const badName = new Proxy({}, { has() { throw new Error('name'); } });
   expect(safeSerialize({ badId, badName })).toBeDefined();
 });
+
+test('safeSerialize preserves arrays and redacts error fields', () => {
+  expect(safeSerialize([1, { id: 2 }])).toEqual([1, { id: 2 }]);
+  const error = new Error('secret');
+  expect(safeSerialize(error, new Set(['message'])).message).toBe('[REDACTED]');
+});

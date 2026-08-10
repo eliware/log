@@ -2,8 +2,17 @@ import winston from 'winston';
 
 export const safeSerialize = (obj, redact = new Set()) => {
   if (obj === null) return null;
-  if (obj instanceof Error) return { name: obj.name, message: obj.message, stack: obj.stack };
+  if (obj instanceof Error) {
+    const error = { name: obj.name, message: obj.message, stack: obj.stack };
+    for (const key of Object.keys(error)) {
+      if (redact.has(key.toLowerCase())) error[key] = '[REDACTED]';
+    }
+    return error;
+  }
   if (typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) {
+    return obj.map(value => safeSerialize(value, redact));
+  }
   try {
     const out = {};
     for (const k of Object.keys(obj)) {
