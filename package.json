@@ -1,7 +1,7 @@
 {
     "name": "@eliware/log",
     "type": "module",
-    "version": "1.1.12",
+    "version": "2.0.0",
     "description": "Structured, secure ESM logging for Node.js, backed by Winston.",
     "types": "index.d.ts",
     "files": [
