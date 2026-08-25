@@ -23,6 +23,11 @@ export declare function createLogger(options?: {
 };
 
 /**
+ * Safely summarizes metadata without invoking toJSON or recursively expanding objects.
+ */
+export declare function safeSerialize(value: unknown, redactKeys?: Set<string>): unknown;
+
+/**
  * Default logger instance.
  *
  * All logger methods accept either (message, metaObject) or (message, primitive/array),
