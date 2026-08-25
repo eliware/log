@@ -18,9 +18,8 @@
         }
     },
     "scripts": {
-        "test": "npx --node-options=\"--experimental-vm-modules --no-warnings\" jest --detectOpenHandles --silent --coverage",
-        "test:gaps": "node scripts/test-gaps.mjs",
-        "lint": "npx oxlint .",
+        "test": "eliware-test",
+        "lint": "eliware-test --lint",
         "typecheck": "tsc --project tsconfig.json",
         "pack": "npm pack --dry-run"
     },
@@ -44,16 +43,8 @@
     },
     "homepage": "https://github.com/eliware/log#readme",
     "devDependencies": {
-        "jest": "^30.4.2",
-        "oxlint": "^1.80.0",
+        "@eliware/test": "^2.0.0",
         "typescript": "^7.0.2"
-    },
-    "jest": {
-        "testEnvironment": "node",
-        "testMatch": [
-            "**/?(*.)+(spec|test).[jt]s?(x)",
-            "**/?(*.)+(spec|test).mjs"
-        ]
     },
     "dependencies": {
         "winston": "^3.17.0"
