@@ -13,7 +13,7 @@
 
 ## Validation
 
-Run `npm test`, `npm run test:gaps`, `npm run lint`, `npm run typecheck`, and `npm run pack`. Maintain 100% coverage without Istanbul ignore directives.
+Run `npm test`, `npm run lint`, `npm run typecheck`, and `npm run pack`. Use the standard `@eliware/test` harness, which includes the coverage-gap check. Maintain 100% coverage without Istanbul ignore directives.
 
 ## Changes
 
