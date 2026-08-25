@@ -29,6 +29,7 @@
 - Supports child loggers with persistent context
 - Serializes Error objects with name, message, and stack
 - Supports configurable metadata redaction
+- Exports `safeSerialize` for defensive metadata summarization
 - **Supports logging primitives and arrays as meta:**
   - `log.info('msg', 42)` logs `{ value: 42 }`
   - `log.info('msg', [1,2,3])` logs `{ value: [1,2,3] }`
@@ -94,6 +95,10 @@ Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
 
 **Returns:** `winston.Logger`
 
+### safeSerialize(value, redactKeys?)
+
+Safely summarizes a value for logging without invoking `toJSON` or recursively expanding nested objects. Errors include their `name`, `message`, and `stack`; functions, BigInts, arrays, and hostile property access are handled defensively. Pass a `Set` of lowercase keys to redact matching object keys and Error fields.
+
 ## TypeScript
 
 Type definitions are included:
@@ -111,6 +116,7 @@ export declare function createLogger(options?: {
   warn(message: string, meta?: unknown): void;
   error(message: string, meta?: unknown): void;
 };
+export declare function safeSerialize(value: unknown, redactKeys?: Set<string>): unknown;
 export declare const log: import('winston').Logger & {
   debug(message: string, meta?: unknown): void;
   info(message: string, meta?: unknown): void;
@@ -128,9 +134,9 @@ Use `redactKeys` for sensitive metadata. Objects are shallowly summarized; neste
 
 ```bash
 npm test
-npm run test:gaps
 npm run lint
 npm run typecheck
+npm audit --omit=dev --audit-level=moderate
 npm run pack
 ```
 

@@ -1,5 +1,16 @@
 # Release Notes
 
+## 2.0.0 — August 25, 2026
+
+### Changed
+
+- Adopted `@eliware/test` for the standard test and lint harness.
+- Replaced direct Jest/Oxlint scripts and dependencies with `eliware-test` commands.
+- Integrated 100×4 coverage-gap reporting into `npm test`.
+- Added production dependency auditing to CI validation.
+- Updated CI to validate on `main`, pull requests, and `v*` tags on Ubuntu and Windows.
+- Split validation and npm publishing into separate jobs; publishing now requires both platform validations and is limited to `v*` tags with publish-only credentials.
+
 ## 1.1.12 — August 10, 2026
 
 - Hardened Error serialization against throwing property accessors.
