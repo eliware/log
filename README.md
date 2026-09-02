@@ -14,6 +14,7 @@
   - [ESM Example](#esm-example)
   - [API](#api)
 - [TypeScript](#typescript)
+- [Operations](#operations)
 - [Support](#support)
 - [License](#license)
 - [Links](#links)
@@ -97,7 +98,7 @@ Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
 
 ### safeSerialize(value, redactKeys?)
 
-Safely summarizes a value for logging without invoking `toJSON` or recursively expanding nested objects. Errors include their `name`, `message`, and `stack`; functions, BigInts, arrays, and hostile property access are handled defensively. Pass a `Set` of lowercase keys to redact matching object keys and Error fields.
+Safely summarizes a value for logging without invoking `toJSON` or expanding arbitrary nested objects. Errors include their `name`, `message`, and `stack`; functions, BigInts, arrays, circular references, and hostile property access are handled defensively. Arrays are preserved recursively, while ordinary nested objects are reduced to a safe type/id/name summary. Pass a `Set` of lowercase keys to redact matching object keys and Error fields.
 
 ## TypeScript
 
@@ -128,7 +129,7 @@ export default log;
 
 ## Errors / Troubleshooting
 
-Use `redactKeys` for sensitive metadata. Objects are shallowly summarized; nested object contents are not recursively serialized. Error fields are also subject to redaction. JSON output includes timestamps only when `timestamp: true`; text output safely summarizes objects and serializes BigInt values. Configure transports explicitly for tests and alternate destinations.
+Use `redactKeys` for sensitive metadata. Ordinary nested objects are summarized rather than recursively expanded, while arrays are preserved and circular references are replaced with `[Circular]`. Error fields are also subject to redaction. JSON output includes timestamps only when `timestamp: true`; text output safely summarizes objects and serializes BigInt values. Configure transports explicitly for tests and alternate destinations.
 
 ## Development
 
@@ -139,6 +140,10 @@ npm run typecheck
 npm audit --omit=dev --audit-level=moderate
 npm run pack
 ```
+
+## Operations
+
+The package has no import-time external I/O. Inject Winston transports with `createLogger()` for application-specific destinations and configure `LOG_LEVEL` or the explicit `level` option for runtime verbosity. CI validates tests, lint, type declarations, dependency security, and package contents on Ubuntu and Windows; the repository deployment definition runs the same checks after a deployment trigger.
 
 ## Security
 

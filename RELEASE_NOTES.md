@@ -1,5 +1,14 @@
 # Release Notes
 
+## 2.1.0 — September 2, 2026
+
+### Changed
+
+- Decomposed the logger implementation into focused modules under `src/` while preserving the root public entrypoint.
+- Split the test suite into focused files mirroring the implementation structure.
+- Hardened metadata serialization for BigInts, circular arrays, hostile objects, nested Errors, redaction, and prototype-pollution keys.
+- Added deployment validation for test, lint, typecheck, audit, and package checks.
+
 ## 2.0.0 — August 25, 2026
 
 ### Changed

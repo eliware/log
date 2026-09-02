@@ -3,6 +3,7 @@
     "type": "module",
     "version": "2.0.0",
     "description": "Structured, secure ESM logging for Node.js, backed by Winston.",
+    "main": "index.mjs",
     "types": "index.d.ts",
     "files": [
         "index.mjs",
@@ -36,7 +37,11 @@
         "debugging",
         "console",
         "log",
-        "winston"
+        "winston",
+        "structured-logging",
+        "redaction",
+        "serialization",
+        "child-logger"
     ],
     "author": "Eli Sterling <eli@eliware.org>",
     "license": "MIT",
