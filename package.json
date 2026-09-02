@@ -7,6 +7,7 @@
     "files": [
         "index.mjs",
         "index.d.ts",
+        "src",
         "README.md",
         "LICENSE",
         "RELEASE_NOTES.md",
@@ -50,7 +51,7 @@
         "access": "public"
     },
     "devDependencies": {
-        "@eliware/test": "^2.0.0",
+        "@eliware/test": "^2.3.1",
         "typescript": "^7.0.2"
     },
     "dependencies": {
