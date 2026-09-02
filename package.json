@@ -39,6 +39,7 @@
         "log",
         "winston",
         "structured-logging",
+        "structured-logger",
         "redaction",
         "serialization",
         "child-logger"
