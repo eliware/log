@@ -1,5 +1,16 @@
 # Release Notes
 
+## 2.4.0 — September 3, 2026
+
+### Changed
+
+- Hardened serialization of circular ordinary objects and hostile Proxy values.
+- Added validation for custom logger levels with clear configuration errors.
+- Improved serializer redaction normalization and defensive cleanup across recursive paths.
+- Expanded TypeScript declarations with a recursive `SafeSerializedValue` result type.
+- Clarified JSON metadata redaction boundaries and deterministic transport formatting.
+- Expanded regression coverage while preserving 100×4 coverage.
+
 ## 2.1.0 — September 2, 2026
 
 ### Changed

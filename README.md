@@ -14,6 +14,8 @@
   - [ESM Example](#esm-example)
   - [API](#api)
 - [TypeScript](#typescript)
+- [Errors / Troubleshooting](#errors--troubleshooting)
+- [Development](#development)
 - [Operations](#operations)
 - [Support](#support)
 - [License](#license)
@@ -94,7 +96,7 @@ Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
 - `timestamp` (boolean): Include timestamps in JSON output (default: `false`)
 - `redactKeys` (string[]): Metadata keys to redact, case-insensitively
 
-**Returns:** `winston.Logger`
+**Returns:** a `winston.Logger` with the configured transports, format, timestamp behavior, and redaction rules.
 
 ### safeSerialize(value, redactKeys?)
 
@@ -117,7 +119,8 @@ export declare function createLogger(options?: {
   warn(message: string, meta?: unknown): void;
   error(message: string, meta?: unknown): void;
 };
-export declare function safeSerialize(value: unknown, redactKeys?: Set<string>): unknown;
+export type SafeSerializedValue = null | boolean | number | string | SafeSerializedValue[] | { [key: string]: SafeSerializedValue };
+export declare function safeSerialize(value: unknown, redactKeys?: Set<string>): SafeSerializedValue;
 export declare const log: import('winston').Logger & {
   debug(message: string, meta?: unknown): void;
   info(message: string, meta?: unknown): void;
@@ -129,7 +132,7 @@ export default log;
 
 ## Errors / Troubleshooting
 
-Use `redactKeys` for sensitive metadata. Ordinary nested objects are summarized rather than recursively expanded, while arrays are preserved and circular references are replaced with `[Circular]`. Error fields are also subject to redaction. JSON output includes timestamps only when `timestamp: true`; text output safely summarizes objects and serializes BigInt values. Configure transports explicitly for tests and alternate destinations.
+Use `redactKeys` for sensitive metadata. Ordinary nested objects are summarized rather than recursively expanded, while arrays are preserved and circular values encountered during traversal are replaced with `[Circular]`. Error fields are also subject to redaction. JSON output includes timestamps only when `timestamp: true`; text output safely summarizes objects and serializes BigInt values. Configure transports explicitly for tests and alternate destinations. `safeSerialize` returns a recursive `SafeSerializedValue` shape; functions and unsupported values are represented by safe strings.
 
 ## Development
 
