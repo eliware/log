@@ -41,6 +41,7 @@ test('formats primitive, null, array, object, function, bigint and circular meta
   await new Promise(resolve => setImmediate(resolve));
   expect(result.output).toContain('[INFO] values');
   expect(result.output).toContain('[INFO] array');
+  expect(safeSerialize(circular).self).toBe('[Circular]');
   expect(result.output).toContain('"big":"2n"');
   logger.info('function', function named() {});
   logger.info('null-property', { nil: null });
@@ -110,7 +111,9 @@ test('supports BigInt and circular arrays in JSON output', async () => {
   expect(safeSerialize({ big: 2n }).big).toBe('2n');
   const badDescriptor = new Proxy({}, { getOwnPropertyDescriptor() { throw new Error('descriptor'); } });
   expect(safeSerialize({ badDescriptor }).badDescriptor).toEqual({ type: 'Object' });
-  expect(safeSerialize({ value: 1 }, { has() { throw new Error('redact'); } })).toEqual({ value: '[Unserializable]' });
+  const revoked = Proxy.revocable({}, {}); revoked.revoke();
+  expect(safeSerialize({ revoked: revoked.proxy }).revoked).toBe('[Unserializable]');
+  expect(safeSerialize({ value: 1 }, { has() { throw new Error('redact'); } })).toBe('[Unserializable]');
   expect(safeSerialize([], new Set(), { has() { throw new Error('seen'); } })).toBe('[Unserializable]');
   const badLength = new Proxy([], { get(target, key) { if (key === 'length') throw new Error('length'); return Reflect.get(target, key); } });
   expect(safeSerialize(badLength)).toBe('[Unserializable]');
@@ -123,6 +126,10 @@ test('safeSerialize handles all primitive and object forms directly', () => {
   expect(safeSerialize(3)).toBe(3);
   expect(safeSerialize(new Error('boom')).message).toBe('boom');
   expect(safeSerialize({ token: 'secret' }, new Set(['token']))).toEqual({ token: '[REDACTED]' });
+  expect(safeSerialize({ TOKEN: 'secret' }, new Set(['token']))).toEqual({ TOKEN: '[REDACTED]' });
+  const accessor = {};
+  Object.defineProperty(accessor, 'value', { enumerable: true, get() { return 'secret'; } });
+  expect(safeSerialize(accessor).value).toBe('[Unserializable]');
   expect(safeSerialize({ nil: null, value: 'ok', nested: { id: 7, name: 'n' }, fn: () => {} })).toMatchObject({ nil: null, value: 'ok', nested: { id: 7, name: 'n' }, fn: '[Function: fn]' });
   const anonymous = function () {}; Object.defineProperty(anonymous, 'name', { value: '' }); expect(safeSerialize({ anonymous }).anonymous).toBe('[Function: anonymous]');
   expect(safeSerialize({ noCtor: Object.create(null) }).noCtor.type).toBe('Object');

@@ -8,6 +8,7 @@ const serializeValue = (value, redact = new Set(), seen = new WeakSet()) => {
   if (typeof value !== 'object') return value;
   if (Array.isArray(value)) return serializeArray(value, redact, seen);
   try {
+    seen.add(value);
     const output = Object.create(null);
     for (const key of Object.keys(value)) {
       try {
@@ -19,6 +20,8 @@ const serializeValue = (value, redact = new Set(), seen = new WeakSet()) => {
         else if (child instanceof Error) output[key] = safeSerialize(child, redact, seen);
         else if (Array.isArray(child)) output[key] = safeSerialize(child, redact, seen);
         else if (typeof child === 'object') {
+          if (seen.has(child)) { output[key] = '[Circular]'; continue; }
+          Object.getPrototypeOf(child);
           const info = { type: 'Object' };
           try {
             const id = Object.getOwnPropertyDescriptor(child, 'id')?.value;
@@ -36,8 +39,13 @@ const serializeValue = (value, redact = new Set(), seen = new WeakSet()) => {
     }
     return output;
   } catch { return '[Unserializable]'; }
+  finally { seen.delete(value); }
 };
 
-export const safeSerialize = (value, redact = new Set(), seen = new WeakSet()) => {
-  try { return serializeValue(value, redact, seen); } catch { return '[Unserializable]'; }
+export const safeSerialize = (value, redact = new Set(), seen) => {
+  try {
+    const traversal = seen ?? new WeakSet();
+    const normalizedRedact = seen ? redact : new Set([...redact].map(key => String(key).toLowerCase()));
+    return serializeValue(value, normalizedRedact, traversal);
+  } catch { return '[Unserializable]'; }
 };

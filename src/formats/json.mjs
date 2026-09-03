@@ -2,6 +2,7 @@ import winston from 'winston';
 import { safeSerialize } from '../serialization/safe-serialize.mjs';
 
 export const jsonFormat = (redact, timestamp) => {
+  // Sanitize eagerly so every emitted record has deterministic, transport-independent metadata.
   const sanitize = winston.format((info) => {
     for (const key of Object.keys(info)) {
       if (key === 'level' || key === 'message') continue;

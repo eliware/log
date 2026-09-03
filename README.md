@@ -98,7 +98,7 @@ Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
 
 ### safeSerialize(value, redactKeys?)
 
-Safely summarizes a value for logging without invoking `toJSON` or expanding arbitrary nested objects. Errors include their `name`, `message`, and `stack`; functions, BigInts, arrays, circular references, and hostile property access are handled defensively. Arrays are preserved recursively, while ordinary nested objects are reduced to a safe type/id/name summary. Pass a `Set` of lowercase keys to redact matching object keys and Error fields.
+Safely summarizes a value for logging without invoking `toJSON` or expanding arbitrary nested objects. Errors intentionally include only their `name`, `message`, and `stack`; enumerable custom Error properties are omitted. Functions, BigInts, arrays, circular references, and hostile property access are handled defensively. Arrays are preserved recursively, while ordinary nested objects are reduced to a safe type/id/name summary; circular values encountered during traversal are replaced with `[Circular]`. Pass a `Set` of keys to redact matching object keys and Error fields; keys are normalized case-insensitively for both direct `safeSerialize` calls and `createLogger`. JSON-format redaction covers enumerable string-keyed metadata present when Winston formats the record; transport-added metadata is outside this boundary.
 
 ## TypeScript
 
@@ -143,7 +143,7 @@ npm run pack
 
 ## Operations
 
-The package has no import-time external I/O. Inject Winston transports with `createLogger()` for application-specific destinations and configure `LOG_LEVEL` or the explicit `level` option for runtime verbosity. CI validates tests, lint, type declarations, dependency security, and package contents on Ubuntu and Windows; the repository deployment definition runs the same checks after a deployment trigger.
+The package has no import-time external I/O. Inject Winston transports with `createLogger()` for application-specific destinations and configure `LOG_LEVEL` or the explicit `level` option for runtime verbosity. CI validates tests, lint, type declarations, dependency security, and package contents on [Ubuntu and Windows](.github/workflows/nodejs.yml); the [deployment definition](.knit/deploy.yaml) runs the same checks after a deployment trigger. Metadata is sanitized eagerly before formatting so records are deterministic even when a transport later filters them by level.
 
 ## Security
 

@@ -11,7 +11,7 @@ export const createLogger = ({
   redactKeys = []
 } = {}) => {
   if (format !== 'text' && format !== 'json') throw new TypeError('format must be text or json');
-  const redact = new Set(redactKeys.map(key => String(key).toLowerCase()));
+  const redact = new Set((Array.isArray(redactKeys) ? redactKeys : []).map(key => String(key).toLowerCase()));
   const logger = winston.createLogger({
     level,
     format: format === 'json' ? jsonFormat(redact, timestamp) : winston.format.printf(textFormat(redact)),

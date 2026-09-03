@@ -10,6 +10,6 @@ export const serializeArray = (array, redact, seen) => {
       try { output[i] = safeSerialize(array[i], redact, seen); } catch { output[i] = '[Unserializable]'; }
     }
   } catch { output = '[Unserializable]'; }
-  seen.delete(array);
+  finally { seen.delete(array); }
   return output;
 };

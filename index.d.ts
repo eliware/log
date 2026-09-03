@@ -24,8 +24,10 @@ export declare function createLogger(options?: {
 
 /**
  * Safely summarizes metadata without invoking toJSON or recursively expanding objects.
+ * Error custom properties are intentionally omitted; only name, message, and stack are retained.
  */
-export declare function safeSerialize(value: unknown, redactKeys?: Set<string>): unknown;
+export type SafeSerializedValue = null | boolean | number | string | SafeSerializedValue[] | { [key: string]: SafeSerializedValue };
+export declare function safeSerialize(value: unknown, redactKeys?: Set<string>): SafeSerializedValue;
 
 /**
  * Default logger instance.
