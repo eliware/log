@@ -1,4 +1,4 @@
-import log, { log as namedLog, createLogger, safeSerialize } from '../index.mjs';
+import log, { log as namedLog, createLogger, safeSerialize } from '../src/index.mjs';
 import { expect, test } from '@jest/globals';
 
 test('exposes the stable public API', () => {

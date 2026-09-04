@@ -39,7 +39,8 @@
 
 ## Requirements
 
-- Node.js 26 or newer
+- Node.js 20 or newer
+- Node.js 20 is the minimum supported runtime.
 
 ## Installation
 
@@ -90,7 +91,7 @@ Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
 
 **Options:**
 
-- `level` (string): Log level (default: `process.env.LOG_LEVEL` or `'info'`)
+- `level` (string): Log level (default: `'info'`; invalid values throw a `TypeError`)
 - `transports` (array): Array of winston transports (default: Console)
 - `format` (`text` or `json`): Output format (default: `text`)
 - `timestamp` (boolean): Include timestamps in JSON output (default: `false`)
@@ -98,9 +99,9 @@ Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
 
 **Returns:** a `winston.Logger` with the configured transports, format, timestamp behavior, and redaction rules.
 
-### safeSerialize(value, redactKeys?)
+### safeSerialize(value, redactKeys?: Set<string>)
 
-Safely summarizes a value for logging without invoking `toJSON` or expanding arbitrary nested objects. Errors intentionally include only their `name`, `message`, and `stack`; enumerable custom Error properties are omitted. Functions, BigInts, arrays, circular references, and hostile property access are handled defensively. Arrays are preserved recursively, while ordinary nested objects are reduced to a safe type/id/name summary; circular values encountered during traversal are replaced with `[Circular]`. Pass a `Set` of keys to redact matching object keys and Error fields; keys are normalized case-insensitively for both direct `safeSerialize` calls and `createLogger`. JSON-format redaction covers enumerable string-keyed metadata present when Winston formats the record; transport-added metadata is outside this boundary.
+Safely serializes a value for logging without invoking `toJSON`. Errors intentionally include only their `name`, `message`, and `stack`; enumerable custom Error properties are omitted. Functions, BigInts, arrays, nested objects, circular references, and hostile property access are handled defensively. Objects and arrays are recursively preserved, with circular values replaced by `[Circular]`. Pass a `Set` of keys to redact matching keys at every traversed level and Error fields; keys are normalized case-insensitively for direct `safeSerialize` calls and `createLogger`. Example: `safeSerialize(metadata, new Set(['token']))`. JSON-format redaction covers enumerable string-keyed metadata present when Winston formats the record; transport-added metadata is outside this boundary.
 
 ## TypeScript
 
@@ -114,25 +115,25 @@ export declare function createLogger(options?: {
   timestamp?: boolean;
   redactKeys?: string[];
 }): import('winston').Logger & {
-  debug(message: string, meta?: unknown): void;
-  info(message: string, meta?: unknown): void;
-  warn(message: string, meta?: unknown): void;
-  error(message: string, meta?: unknown): void;
+  debug(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  info(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  warn(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  error(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
 };
 export type SafeSerializedValue = null | boolean | number | string | SafeSerializedValue[] | { [key: string]: SafeSerializedValue };
 export declare function safeSerialize(value: unknown, redactKeys?: Set<string>): SafeSerializedValue;
 export declare const log: import('winston').Logger & {
-  debug(message: string, meta?: unknown): void;
-  info(message: string, meta?: unknown): void;
-  warn(message: string, meta?: unknown): void;
-  error(message: string, meta?: unknown): void;
+  debug(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  info(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  warn(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  error(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
 };
 export default log;
 ```
 
 ## Errors / Troubleshooting
 
-Use `redactKeys` for sensitive metadata. Ordinary nested objects are summarized rather than recursively expanded, while arrays are preserved and circular values encountered during traversal are replaced with `[Circular]`. Error fields are also subject to redaction. JSON output includes timestamps only when `timestamp: true`; text output safely summarizes objects and serializes BigInt values. Configure transports explicitly for tests and alternate destinations. `safeSerialize` returns a recursive `SafeSerializedValue` shape; functions and unsupported values are represented by safe strings.
+Use `redactKeys` for sensitive metadata; it applies to metadata keys, not log message text. Objects and arrays are recursively preserved and circular values encountered during traversal are replaced with `[Circular]`. Deep or oversized values are truncated with `[Truncated]`. Error fields and nested object keys are subject to redaction. JSON output includes timestamps only when `timestamp: true`; text output safely serializes objects and BigInt values. Configure transports explicitly for tests and alternate destinations. `safeSerialize` returns a recursive `SafeSerializedValue` shape; functions, symbols, and hostile values are represented by safe strings.
 
 ## Development
 
@@ -146,7 +147,7 @@ npm run pack
 
 ## Operations
 
-The package has no import-time external I/O. Inject Winston transports with `createLogger()` for application-specific destinations and configure `LOG_LEVEL` or the explicit `level` option for runtime verbosity. CI validates tests, lint, type declarations, dependency security, and package contents on [Ubuntu and Windows](.github/workflows/nodejs.yml); the [deployment definition](.knit/deploy.yaml) runs the same checks after a deployment trigger. Metadata is sanitized eagerly before formatting so records are deterministic even when a transport later filters them by level.
+The package has no import-time external I/O. Inject Winston transports with `createLogger()` for application-specific destinations and configure the explicit `level` option for runtime verbosity. The public package entrypoint is composed in `src/index.mjs`; consumers should import from `@eliware/log`, not from internal source paths. Metadata is sanitized eagerly before formatting so records are deterministic even when a transport later filters them by level. Custom transports that add sensitive metadata after formatting must sanitize those additions themselves.
 
 ## Security
 

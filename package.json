@@ -3,12 +3,10 @@
     "type": "module",
     "version": "2.4.0",
     "description": "Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by Winston.",
-    "main": "index.mjs",
-    "types": "index.d.ts",
+    "main": "src/index.mjs",
+    "types": "src/index.d.ts",
     "sideEffects": false,
     "files": [
-        "index.mjs",
-        "index.d.ts",
         "src",
         "README.md",
         "LICENSE",
@@ -17,8 +15,8 @@
     ],
     "exports": {
         ".": {
-            "import": "./index.mjs",
-            "types": "./index.d.ts"
+            "import": "./src/index.mjs",
+            "types": "./src/index.d.ts"
         }
     },
     "scripts": {
@@ -26,6 +24,7 @@
         "lint": "eliware-test --lint",
         "typecheck": "tsc --project tsconfig.json",
         "pack": "npm pack --dry-run"
+        ,"audit": "npm audit --omit=dev --audit-level=moderate"
     },
     "repository": {
         "type": "git",
@@ -52,13 +51,13 @@
     },
     "homepage": "https://github.com/eliware/log#readme",
     "engines": {
-        "node": ">=26"
+        "node": ">=20"
     },
     "publishConfig": {
         "access": "public"
     },
     "devDependencies": {
-        "@eliware/test": "^2.4.0",
+        "@eliware/test": "^3.0.0",
         "typescript": "^7.0.2"
     },
     "dependencies": {

@@ -15,6 +15,10 @@ test('configures JSON output and redaction', async () => {
   expect(JSON.parse(output.trim()).secret).toBe('[REDACTED]');
 });
 
-test('ignores malformed redaction configuration safely', () => {
-  expect(createLogger({ redactKeys: null, transports: [] }).info).toEqual(expect.any(Function));
+test('rejects malformed redaction configuration', () => {
+  expect(() => createLogger({ redactKeys: null, transports: [] })).toThrow('redactKeys');
+});
+
+test('rejects an invalid configured level', () => {
+  expect(() => createLogger({ level: 'not-a-winston-level', transports: [] })).toThrow('Unknown logger level');
 });

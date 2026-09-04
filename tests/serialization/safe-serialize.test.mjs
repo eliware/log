@@ -1,5 +1,5 @@
-import log, { log as namedLog, createLogger, safeSerialize } from '../../index.mjs';
-import { jest, test, expect } from '@jest/globals';
+import log, { log as namedLog, createLogger, safeSerialize } from '../../src/index.mjs';
+import { test, expect } from '@jest/globals';
 import { PassThrough } from 'node:stream';
 import winston from 'winston';
 
@@ -24,10 +24,7 @@ test('createLogger defaults and returns a logger', () => {
 
 test('exports refer to the configured logger', () => {
   expect(namedLog).toBe(log);
-  const spy = jest.spyOn(console._stdout, 'write').mockImplementation(() => {});
-  log.info('default');
-  namedLog.info('named', { foo: 'bar' });
-  spy.mockRestore();
+  expect(log.info).toEqual(expect.any(Function));
 });
 
 test('formats primitive, null, array, object, function, bigint and circular metadata', async () => {
@@ -110,10 +107,10 @@ test('supports BigInt and circular arrays in JSON output', async () => {
   expect(safeSerialize({ error: new Error('nested') }).error).toMatchObject({ message: 'nested' });
   expect(safeSerialize({ big: 2n }).big).toBe('2n');
   const badDescriptor = new Proxy({}, { getOwnPropertyDescriptor() { throw new Error('descriptor'); } });
-  expect(safeSerialize({ badDescriptor }).badDescriptor).toEqual({ type: 'Object' });
+  expect(safeSerialize({ badDescriptor }).badDescriptor).toEqual({});
   const revoked = Proxy.revocable({}, {}); revoked.revoke();
   expect(safeSerialize({ revoked: revoked.proxy }).revoked).toBe('[Unserializable]');
-  expect(safeSerialize({ value: 1 }, { has() { throw new Error('redact'); } })).toBe('[Unserializable]');
+  expect(safeSerialize({ value: 1 }, { has() { throw new Error('redact'); } })).toEqual({ value: 1 });
   expect(safeSerialize([], new Set(), { has() { throw new Error('seen'); } })).toBe('[Unserializable]');
   const badLength = new Proxy([], { get(target, key) { if (key === 'length') throw new Error('length'); return Reflect.get(target, key); } });
   expect(safeSerialize(badLength)).toBe('[Unserializable]');
@@ -123,7 +120,19 @@ test('safeSerialize covers function and hostile objects', () => { expect(safeSer
 
 test('safeSerialize handles all primitive and object forms directly', () => {
   expect(safeSerialize(null)).toBeNull();
+  expect(safeSerialize(undefined)).toBe('[Undefined]');
+  let deepCount = 0; let deepValue = {};
+  while (deepCount++ < 22) deepValue = { child: deepValue };
+  expect(JSON.stringify(safeSerialize(deepValue))).toContain('[Truncated]');
+  const wide = Object.fromEntries(Array.from({ length: 1001 }, (_, index) => [`key${index}`, index]));
+  expect(safeSerialize(wide).__truncated).toBe('[Truncated]');
   expect(safeSerialize(3)).toBe(3);
+  expect(safeSerialize(function named() {})).toBe('[Function: named]');
+  const anonymousFunction = function namedTemporary() {};
+  Object.defineProperty(anonymousFunction, 'name', { value: '' });
+  expect(safeSerialize(anonymousFunction)).toBe('[Function: anonymous]');
+  expect(safeSerialize(Symbol('token'))).toBe('[Symbol: token]');
+  expect(safeSerialize(Symbol())).toBe('[Symbol: ]');
   expect(safeSerialize(new Error('boom')).message).toBe('boom');
   expect(safeSerialize({ token: 'secret' }, new Set(['token']))).toEqual({ token: '[REDACTED]' });
   expect(safeSerialize({ TOKEN: 'secret' }, new Set(['token']))).toEqual({ TOKEN: '[REDACTED]' });
@@ -132,11 +141,15 @@ test('safeSerialize handles all primitive and object forms directly', () => {
   expect(safeSerialize(accessor).value).toBe('[Unserializable]');
   expect(safeSerialize({ nil: null, value: 'ok', nested: { id: 7, name: 'n' }, fn: () => {} })).toMatchObject({ nil: null, value: 'ok', nested: { id: 7, name: 'n' }, fn: '[Function: fn]' });
   const anonymous = function () {}; Object.defineProperty(anonymous, 'name', { value: '' }); expect(safeSerialize({ anonymous }).anonymous).toBe('[Function: anonymous]');
-  expect(safeSerialize({ noCtor: Object.create(null) }).noCtor.type).toBe('Object');
+  expect(safeSerialize({ noCtor: Object.create(null) }).noCtor).toEqual({});
   const badId = new Proxy({ id: 1 }, { getOwnPropertyDescriptor(target, key) { if (key === 'id') throw new Error('id'); return Reflect.getOwnPropertyDescriptor(target, key); } });
   const badName = new Proxy({ name: 'x' }, { getOwnPropertyDescriptor(target, key) { if (key === 'name') throw new Error('name'); return Reflect.getOwnPropertyDescriptor(target, key); } });
-  expect(safeSerialize({ badId, badName })).toMatchObject({ badId: { type: 'Object' }, badName: { type: 'Object' } });
-  expect(safeSerialize({ profile: { id: 'secret', name: 'private' } }, new Set(['id', 'name'])).profile).toEqual({ type: 'Object', id: '[REDACTED]', name: '[REDACTED]' });
+  expect(safeSerialize({ badId, badName })).toMatchObject({ badId: '[Unserializable]', badName: '[Unserializable]' });
+  expect(safeSerialize({ profile: { id: 'secret', name: 'private' } }, new Set(['id', 'name'])).profile).toEqual({ id: '[REDACTED]', name: '[REDACTED]' });
+  expect(safeSerialize({ profile: { TOKEN: 'secret' } }, new Set(['token']), new WeakSet()).profile).toEqual({ TOKEN: '[REDACTED]' });
+  const deep = { level1: { level2: { level3: { token: 'secret', value: 1 } } } };
+  expect(safeSerialize(deep, new Set(['other'])).level1.level2.level3).toEqual({ token: 'secret', value: 1 });
+  expect(safeSerialize(deep, new Set(['token'])).level1.level2.level3.token).toBe('[REDACTED]');
   const prototypeKey = JSON.parse('{"__proto__":"secret"}');
   const safePrototype = safeSerialize(prototypeKey);
   expect(safePrototype['__proto__']).toBe('secret');

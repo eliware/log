@@ -14,3 +14,21 @@ test('emits JSON metadata with redaction and timestamps', async () => {
   expect(record.visible).toBe(true);
   expect(record.timestamp).toBeDefined();
 });
+
+test('uses a safe fallback when JSON output serialization fails', () => {
+  const original = JSON.stringify;
+  JSON.stringify = () => { throw new Error('stringify'); };
+  try {
+    const format = jsonFormat(new Set(), false);
+    const result = format.transform({ level: 'info', message: 'hello' });
+    expect(result[Symbol.for('message')]).toBe('{"message":"[Unserializable]"}');
+  } finally {
+    JSON.stringify = original;
+  }
+});
+
+test('formats records without a timestamp', () => {
+  const format = jsonFormat(new Set(), false);
+  const result = format.transform({ level: 'info', message: 'hello' });
+  expect(JSON.parse(result[Symbol.for('message')])).toMatchObject({ level: 'info', message: 'hello' });
+});
