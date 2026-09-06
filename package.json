@@ -24,11 +24,10 @@
         "lint": "eliware-test --lint",
         "typecheck": "tsc --project tsconfig.json",
         "pack": "npm pack --dry-run"
-        ,"audit": "npm audit --omit=dev --audit-level=moderate"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/eliware/log.git"
+        "url": "https://github.com/eliware/log"
     },
     "keywords": [
         "logging",
@@ -44,23 +43,25 @@
         "serialization",
         "child-logger"
     ],
-    "author": "Eli Sterling <eli@eliware.org>",
+    "author": "Eliware",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/eliware/log/issues"
     },
     "homepage": "https://github.com/eliware/log#readme",
     "engines": {
-        "node": ">=20"
+        "node": ">=26"
     },
     "publishConfig": {
-        "access": "public"
+        "access": "public",
+        "provenance": true
     },
     "devDependencies": {
-        "@eliware/test": "^3.0.0",
+        "@eliware/test": "^6.0.1",
         "typescript": "^7.0.2"
     },
     "dependencies": {
+        "@eliware/redact": "^6.0.0",
         "winston": "^3.17.0"
     }
 }

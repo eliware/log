@@ -1,5 +1,5 @@
 import { createLogger } from './create-logger.mjs';
-export { safeSerialize } from './serialization/safe-serialize.mjs';
+export { safeSerialize } from '@eliware/redact';
 export { createLogger };
 
 const log = createLogger();

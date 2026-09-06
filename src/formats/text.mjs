@@ -1,12 +1,13 @@
-import { safeSerialize } from '../serialization/safe-serialize.mjs';
+import { redactValue, safeSerialize } from '@eliware/redact';
 
 export const textFormat = (redact) => ({ level, message, ...meta }) => {
-  let output = `[${typeof level === 'string' ? level.toUpperCase() : 'INFO'}] ${message ?? ''}`;
-  const keys = Object.keys(meta).filter(key => key !== 'level' && key !== 'message');
+  let messageText;
+  try { messageText = typeof message === 'string' ? message : JSON.stringify(safeSerialize(redactValue(message, redact), redact)); } catch { messageText = '[Unserializable]'; }
+  let output = `[${typeof level === 'string' ? level.toUpperCase() : 'INFO'}] ${messageText}`;
+  const safeMeta = redactValue(meta, redact);
+  const keys = Object.keys(safeMeta);
   if (keys.length > 0) {
-    const safeMeta = {};
-    for (const key of keys) safeMeta[key] = safeSerialize(meta[key], redact);
-    try { output += ' ' + JSON.stringify(safeMeta); } catch { output += ' [Unserializable]'; }
+    try { output += ' ' + JSON.stringify(safeSerialize(safeMeta, redact)); } catch { output += ' [Unserializable]'; }
   }
   return output;
 };

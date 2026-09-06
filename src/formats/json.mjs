@@ -1,5 +1,5 @@
 import winston from 'winston';
-import { safeSerialize } from '../serialization/safe-serialize.mjs';
+import { redactValue, safeSerialize } from '@eliware/redact';
 
 const messageSymbol = Symbol.for('message');
 const sanitizedSymbol = Symbol('sanitized');
@@ -7,11 +7,10 @@ const sanitizedSymbol = Symbol('sanitized');
 export const jsonFormat = (redact, timestamp) => {
   // Sanitize eagerly so every emitted record has deterministic, transport-independent metadata.
   const sanitize = winston.format((info) => {
-    const sanitized = { ...info };
-    for (const key of Object.keys(sanitized)) {
-      if (key === 'level' || key === 'message') continue;
-      sanitized[key] = redact.has(key.toLowerCase()) ? '[REDACTED]' : safeSerialize(sanitized[key], redact);
-    }
+    const { level, message, ...metadata } = info;
+    const sanitized = { level, message, ...safeSerialize(redactValue(metadata, redact), redact) };
+    sanitized.level = info.level;
+    sanitized.message = info.message;
     info[sanitizedSymbol] = sanitized;
     return info;
   });

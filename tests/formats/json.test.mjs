@@ -6,7 +6,7 @@ import winston from 'winston';
 test('emits JSON metadata with redaction and timestamps', async () => {
   const stream = new PassThrough(); let output = '';
   stream.on('data', chunk => { output += chunk.toString(); });
-  const logger = winston.createLogger({ format: jsonFormat(new Set(['token']), true), transports: [new winston.transports.Stream({ stream })] });
+  const logger = winston.createLogger({ format: jsonFormat({ keys: ['token'] }, true), transports: [new winston.transports.Stream({ stream })] });
   logger.info('hello', { token: 'secret', visible: true });
   await new Promise(resolve => setImmediate(resolve));
   const record = JSON.parse(output.trim());
@@ -19,7 +19,7 @@ test('uses a safe fallback when JSON output serialization fails', () => {
   const original = JSON.stringify;
   JSON.stringify = () => { throw new Error('stringify'); };
   try {
-    const format = jsonFormat(new Set(), false);
+    const format = jsonFormat({ keys: [] }, false);
     const result = format.transform({ level: 'info', message: 'hello' });
     expect(result[Symbol.for('message')]).toBe('{"message":"[Unserializable]"}');
   } finally {
@@ -28,7 +28,14 @@ test('uses a safe fallback when JSON output serialization fails', () => {
 });
 
 test('formats records without a timestamp', () => {
-  const format = jsonFormat(new Set(), false);
+  const format = jsonFormat({ keys: [] }, false);
   const result = format.transform({ level: 'info', message: 'hello' });
   expect(JSON.parse(result[Symbol.for('message')])).toMatchObject({ level: 'info', message: 'hello' });
+});
+
+test('preserves own prototype-named metadata safely', () => {
+  const format = jsonFormat({ keys: [] }, false);
+  const metadata = JSON.parse('{"__proto__":"safe"}');
+  const result = format.transform({ level: 'info', message: 'hello', metadata });
+  expect(JSON.parse(result[Symbol.for('message')]).metadata.__proto__).toBe('safe');
 });

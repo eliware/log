@@ -1,5 +1,8 @@
 # AGENTS.md
 
+Applies to: the entire repository unless a more specific `AGENTS.md` is added
+in a descendant directory.
+
 ## Project
 
 `@eliware/log` is an ESM logging library backed by Winston, with structured output, child loggers, serialization, and metadata redaction.

@@ -10,6 +10,9 @@ export const patchLoggerLevels = (logger) => {
   return new Proxy(logger, {
     get(target, property, receiver) {
       const original = Reflect.get(target, property, receiver);
+      if (property === 'child' && typeof original === 'function') {
+        return (...args) => patchLoggerLevels(original.apply(target, args));
+      }
       if (!levels.has(property) || typeof original !== 'function') return original;
       return function (message, meta) {
         const context = this == null || this === globalThis ? target : this;

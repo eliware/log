@@ -36,6 +36,20 @@ test('does not wrap explicitly undefined metadata', () => {
   expect(patchLoggerLevels(logger).info('message', undefined)).toEqual({ message: 'message', meta: undefined });
 });
 
+test('wraps primitive metadata on child loggers', () => {
+  const child = { levels: { info: 0 }, info(message, meta) { this.received = { message, meta }; return this; } };
+  const logger = { levels: { info: 0 }, child() { return child; }, info() {} };
+  const wrappedChild = patchLoggerLevels(logger).child({ requestId: 'r1' });
+  expect(wrappedChild.info('message', 42).received).toEqual({ message: 'message', meta: { value: 42 } });
+});
+
+test('supports detached child level methods', () => {
+  const child = { levels: { info: 0 }, info(message, meta) { return { owner: this, message, meta }; } };
+  const logger = { levels: { info: 0 }, child() { return child; }, info() {} };
+  const detached = patchLoggerLevels(logger).child({}).info;
+  expect(detached('message', 42).owner).toBe(child);
+});
+
 test('preserves context for detached level methods', () => {
   const logger = winston.createLogger({ transports: [] });
   logger.info = function (message, meta) { return { owner: this, message, meta }; };

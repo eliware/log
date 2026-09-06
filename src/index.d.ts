@@ -21,8 +21,8 @@ export declare function createLogger(options?: {
   error(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
 };
 
-/** Runtime-configured Winston levels are available dynamically; standard levels are typed explicitly above. */
-export type LoggerWithConfiguredLevels = import('winston').Logger & Record<string, unknown>;
+/** Runtime-configured Winston levels are available dynamically; standard levels are typed explicitly above and custom levels remain runtime-discovered. */
+export type LoggerWithConfiguredLevels = import('winston').Logger & { [level: string]: unknown };
 
 /**
  * Recursive JSON-safe result returned by safeSerialize.
@@ -33,7 +33,18 @@ export type SafeSerializedValue = null | boolean | number | string | SafeSeriali
  * Safely serializes metadata without invoking toJSON.
  * Error custom properties are intentionally omitted; only name, message, and stack are retained.
  */
-export declare function safeSerialize(value: unknown, redactKeys?: Set<string>): SafeSerializedValue;
+export declare function safeSerialize(value: unknown, options?: RedactionOptions): SafeSerializedValue;
+
+export interface RedactionOptions {
+  keys?: Iterable<string>;
+  redactKeys?: Iterable<string>;
+  marker?: string;
+  maxDepth?: number;
+  maxKeys?: number;
+  maxArray?: number;
+  maxString?: number;
+  circularMarker?: string;
+}
 
 /**
  * Default logger instance.
@@ -46,5 +57,5 @@ export declare const log: import('winston').Logger & {
   info(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
   warn(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
   error(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-};
+} & LoggerWithConfiguredLevels;
 export default log;

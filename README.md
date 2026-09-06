@@ -12,10 +12,12 @@
 - [Installation](#installation)
 - [Usage](#usage)
   - [ESM Example](#esm-example)
-  - [API](#api)
+- [API](#api)
+- [Configuration](#configuration)
 - [TypeScript](#typescript)
 - [Errors / Troubleshooting](#errors--troubleshooting)
 - [Development](#development)
+- [Documentation](#documentation)
 - [Operations](#operations)
 - [Support](#support)
 - [License](#license)
@@ -85,6 +87,8 @@ A pre-configured logger instance. Available as both the default and a named expo
 - If you pass a primitive or array as the second argument, it will be logged as `{ value: ... }`.
 - If you pass an object, it will be logged as usual.
 
+### Configuration
+
 ### createLogger(options)
 
 Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
@@ -99,9 +103,9 @@ Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
 
 **Returns:** a `winston.Logger` with the configured transports, format, timestamp behavior, and redaction rules.
 
-### safeSerialize(value, redactKeys?: Set<string>)
+### safeSerialize(value, options?)
 
-Safely serializes a value for logging without invoking `toJSON`. Errors intentionally include only their `name`, `message`, and `stack`; enumerable custom Error properties are omitted. Functions, BigInts, arrays, nested objects, circular references, and hostile property access are handled defensively. Objects and arrays are recursively preserved, with circular values replaced by `[Circular]`. Pass a `Set` of keys to redact matching keys at every traversed level and Error fields; keys are normalized case-insensitively for direct `safeSerialize` calls and `createLogger`. Example: `safeSerialize(metadata, new Set(['token']))`. JSON-format redaction covers enumerable string-keyed metadata present when Winston formats the record; transport-added metadata is outside this boundary.
+Safely serializes a value for logging without invoking `toJSON`. Serialization and redaction are provided by [`@eliware/redact`](https://github.com/eliware/redact). Pass `{ keys: ['token'] }` or `{ redactKeys: ['token'] }` when using `safeSerialize` directly. Logger `redactKeys` options are forwarded to that library for recursive, case-insensitive metadata redaction.
 
 ## TypeScript
 
@@ -115,25 +119,28 @@ export declare function createLogger(options?: {
   timestamp?: boolean;
   redactKeys?: string[];
 }): import('winston').Logger & {
-  debug(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  info(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  warn(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  error(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  debug(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  info(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  warn(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  error(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
 };
 export type SafeSerializedValue = null | boolean | number | string | SafeSerializedValue[] | { [key: string]: SafeSerializedValue };
-export declare function safeSerialize(value: unknown, redactKeys?: Set<string>): SafeSerializedValue;
+export declare function safeSerialize(value: unknown, options?: RedactionOptions): SafeSerializedValue;
 export declare const log: import('winston').Logger & {
-  debug(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  info(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  warn(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  error(message: string, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-};
+  debug(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  info(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  warn(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+  error(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
+} & LoggerWithConfiguredLevels;
+export type LoggerWithConfiguredLevels = import('winston').Logger & { [level: string]: unknown };
 export default log;
 ```
 
 ## Errors / Troubleshooting
 
-Use `redactKeys` for sensitive metadata; it applies to metadata keys, not log message text. Objects and arrays are recursively preserved and circular values encountered during traversal are replaced with `[Circular]`. Deep or oversized values are truncated with `[Truncated]`. Error fields and nested object keys are subject to redaction. JSON output includes timestamps only when `timestamp: true`; text output safely serializes objects and BigInt values. Configure transports explicitly for tests and alternate destinations. `safeSerialize` returns a recursive `SafeSerializedValue` shape; functions, symbols, and hostile values are represented by safe strings.
+Use `redactKeys` for sensitive metadata; it applies to metadata keys, not log message text. Redaction and defensive serialization are delegated to `@eliware/redact`, including nested objects, arrays, errors, circular values, and limits. JSON output includes timestamps only when `timestamp: true`; text output safely serializes objects and BigInt values. Configure transports explicitly for tests and alternate destinations.
+
+Nested redaction is recursive: `createLogger({ format: 'json', redactKeys: ['token'] })` redacts `token` at any nested object or array level.
 
 ## Development
 
@@ -143,7 +150,18 @@ npm run lint
 npm run typecheck
 npm audit --omit=dev --audit-level=moderate
 npm run pack
+npm audit --omit=dev --audit-level=moderate
+
+# after npm install, run the shipped example
+node examples/example.mjs
 ```
+
+## Documentation
+
+- [End-user documentation](docs/README.md)
+- [Specifications](specs/README.md)
+- [Runnable examples](examples/README.md)
+- [Release notes](RELEASE_NOTES.md)
 
 ## Operations
 
