@@ -1,7 +1,7 @@
 {
     "name": "@eliware/log",
     "type": "module",
-    "version": "2.4.0",
+    "version": "6.0.0",
     "description": "Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by Winston.",
     "main": "src/index.mjs",
     "types": "src/index.d.ts",

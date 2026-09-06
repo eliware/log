@@ -1,5 +1,26 @@
 # Release Notes
 
+## 6.0.0 — September 6, 2026
+
+### Breaking changes
+
+- Raised the minimum supported runtime to Node.js 26.
+- Moved the public implementation and declarations under `src/` and aligned
+  the package exports with the new layout.
+- Delegated redaction and defensive serialization to `@eliware/redact`.
+
+### Added
+
+- Added focused source/test architecture, end-user documentation,
+  specifications, runnable examples, and the repository environment contract.
+- Added defensive JSON serialization for non-string messages, including Errors,
+  BigInts, and circular values.
+
+### Changed
+
+- Standardized CI validation and npm publishing workflow across Eliware
+  packages.
+
 ## 2.4.0 — September 3, 2026
 
 ### Changed
