@@ -41,8 +41,8 @@
 
 ## Requirements
 
-- Node.js 20 or newer
-- Node.js 20 is the minimum supported runtime.
+- Node.js 26 or newer
+- Node.js 26 is the minimum supported runtime.
 
 ## Installation
 
