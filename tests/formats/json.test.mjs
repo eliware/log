@@ -33,6 +33,19 @@ test('formats records without a timestamp', () => {
   expect(JSON.parse(result[Symbol.for('message')])).toMatchObject({ level: 'info', message: 'hello' });
 });
 
+test('defensively serializes non-string messages without applying metadata redaction', () => {
+  const format = jsonFormat({ keys: ['token'] }, false);
+  const circular = {};
+  circular.self = circular;
+  const result = format.transform({ level: 'info', message: { error: new Error('boom'), big: 2n, circular, token: 'message-token' }, token: 'secret' });
+  const record = JSON.parse(result[Symbol.for('message')]);
+  expect(record.message.error.message).toBe('boom');
+  expect(record.message.big).toBe('2n');
+  expect(record.message.circular.self).toBe('[CIRCULAR]');
+  expect(record.message.token).toBe('message-token');
+  expect(record.token).toBe('[REDACTED]');
+});
+
 test('preserves own prototype-named metadata safely', () => {
   const format = jsonFormat({ keys: [] }, false);
   const metadata = JSON.parse('{"__proto__":"safe"}');

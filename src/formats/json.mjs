@@ -8,9 +8,9 @@ export const jsonFormat = (redact, timestamp) => {
   // Sanitize eagerly so every emitted record has deterministic, transport-independent metadata.
   const sanitize = winston.format((info) => {
     const { level, message, ...metadata } = info;
-    const sanitized = { level, message, ...safeSerialize(redactValue(metadata, redact), redact) };
+    const safeMessage = typeof message === 'string' ? message : safeSerialize(message, { keys: [] });
+    const sanitized = { level, message: safeMessage, ...safeSerialize(redactValue(metadata, redact), redact) };
     sanitized.level = info.level;
-    sanitized.message = info.message;
     info[sanitizedSymbol] = sanitized;
     return info;
   });
