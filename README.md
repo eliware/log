@@ -18,6 +18,7 @@
 - [Errors / Troubleshooting](#errors--troubleshooting)
 - [Development](#development)
 - [Documentation](#documentation)
+- [Packaging](#packaging)
 - [Operations](#operations)
 - [Support](#support)
 - [License](#license)
@@ -163,6 +164,12 @@ node examples/example.mjs
 - [Release notes](RELEASE_NOTES.md)
 
 ## Operations
+
+## Packaging
+
+The published package includes the runtime source, declarations, documentation,
+specifications, examples, license, and release notes. Validate the package with
+`npm run pack` before publishing; releases use exact `v#.#.#` tags.
 
 The package has no import-time external I/O. Inject Winston transports with `createLogger()` for application-specific destinations and configure the explicit `level` option for runtime verbosity. The public package entrypoint is composed in `src/index.mjs`; consumers should import from `@eliware/log`, not from internal source paths. Metadata is sanitized eagerly before formatting so records are deterministic even when a transport later filters them by level. Custom transports that add sensitive metadata after formatting must sanitize those additions themselves.
 

@@ -1,5 +1,9 @@
 # AGENTS.md
 
+Central convention authority: `eliware/docs`, `eliware/conventions`, and
+`eliware/operations`. This project follows those repositories for shared
+documentation, repository structure, and operational workflows.
+
 Applies to: the entire repository unless a more specific `AGENTS.md` is added
 in a descendant directory.
 
