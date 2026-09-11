@@ -24,14 +24,13 @@ export declare function createLogger(options?: {
 /** Runtime-configured Winston levels are available dynamically; standard levels are typed explicitly above and custom levels remain runtime-discovered. */
 export type LoggerWithConfiguredLevels = import('winston').Logger & { [level: string]: unknown };
 
-/**
- * Recursive JSON-safe result returned by safeSerialize.
- */
+/** Recursive JSON-safe result returned by safeSerialize. */
+export type SafeSerializedValue = null | boolean | number | string | SafeSerializedValue[] | { [key: string]: SafeSerializedValue };
 /**
  * Safely serializes metadata without invoking toJSON.
  * Error custom properties are intentionally omitted; only name, message, and stack are retained.
  */
-export declare function safeSerialize(value: unknown, options?: RedactionOptions): unknown;
+export declare function safeSerialize(value: unknown, options?: RedactionOptions): SafeSerializedValue;
 
 export type RedactionOptions = import('@eliware/redact').SerializationOptions;
 

@@ -8,19 +8,20 @@ export const jsonFormat = (redact, timestamp) => {
   // Sanitize eagerly so every emitted record has deterministic, transport-independent metadata.
   const sanitize = winston.format((info) => {
     const { level, message, ...metadata } = info;
-    const safeMessage = typeof message === 'string' ? message : safeSerialize(message, { keys: [] });
+    const safeMessage = typeof message === 'string' ? message : safeSerialize(message, redact);
     const sanitized = { level, message: safeMessage, ...safeSerialize(metadata, redact) };
-    sanitized.level = info.level;
     info[sanitizedSymbol] = sanitized;
     return info;
   });
   const output = winston.format((info) => {
     try {
       const record = info[sanitizedSymbol];
-      if (info.timestamp !== undefined) record.timestamp = info.timestamp;
       info[messageSymbol] = JSON.stringify(record);
-    } catch { info[messageSymbol] = '{"message":"[Unserializable]"}'; }
+    } catch {
+      const fallback = { level: info.level ?? '[Unserializable]', message: safeSerialize(info.message, redact) };
+      try { info[messageSymbol] = JSON.stringify(fallback); } catch { info[messageSymbol] = '{"level":"[Unserializable]","message":"[Unserializable]"}'; }
+    }
     return info;
   });
-  return winston.format.combine(sanitize(), ...(timestamp ? [winston.format.timestamp()] : []), output());
+  return winston.format.combine(...(timestamp ? [winston.format.timestamp()] : []), sanitize(), output());
 };

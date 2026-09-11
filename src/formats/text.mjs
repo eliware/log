@@ -2,7 +2,7 @@ import { safeSerialize } from '@eliware/redact';
 
 export const textFormat = (redact) => ({ level, message, ...meta }) => {
   let messageText;
-  try { messageText = typeof message === 'string' ? message : JSON.stringify(safeSerialize(message, { keys: [] })); } catch { messageText = '[Unserializable]'; }
+  try { messageText = typeof message === 'string' ? message : JSON.stringify(safeSerialize(message, redact)); } catch { messageText = '[Unserializable]'; }
   let output = `[${typeof level === 'string' ? level.toUpperCase() : 'INFO'}] ${messageText}`;
   const safeMeta = safeSerialize(meta, redact);
   const keys = Object.keys(safeMeta);

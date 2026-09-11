@@ -21,7 +21,20 @@ test('uses a safe fallback when JSON output serialization fails', () => {
   try {
     const format = jsonFormat({ keys: [] }, false);
     const result = format.transform({ level: 'info', message: 'hello' });
-    expect(result[Symbol.for('message')]).toBe('{"message":"[Unserializable]"}');
+    expect(result[Symbol.for('message')]).toBe('{"level":"[Unserializable]","message":"[Unserializable]"}');
+  } finally {
+    JSON.stringify = original;
+  }
+});
+
+test('preserves a safe fallback record when level is absent', () => {
+  const original = JSON.stringify;
+  let calls = 0;
+  JSON.stringify = (value) => { if (calls++ === 0) throw new Error('record'); return original(value); };
+  try {
+    const format = jsonFormat({ keys: [] }, false);
+    const result = format.transform({ message: 'hello' });
+    expect(result[Symbol.for('message')]).toBe('{"level":"[Unserializable]","message":"hello"}');
   } finally {
     JSON.stringify = original;
   }
@@ -33,7 +46,7 @@ test('formats records without a timestamp', () => {
   expect(JSON.parse(result[Symbol.for('message')])).toMatchObject({ level: 'info', message: 'hello' });
 });
 
-test('defensively serializes non-string messages without applying metadata redaction', () => {
+test('defensively serializes and redacts non-string messages', () => {
   const format = jsonFormat({ keys: ['token'] }, false);
   const circular = {};
   circular.self = circular;
@@ -42,7 +55,7 @@ test('defensively serializes non-string messages without applying metadata redac
   expect(record.message.error.message).toBe('boom');
   expect(record.message.big).toBe('2n');
   expect(record.message.circular.self).toBe('[CIRCULAR]');
-  expect(record.message.token).toBe('message-token');
+  expect(record.message.token).toBe('[REDACTED]');
   expect(record.token).toBe('[REDACTED]');
 });
 
