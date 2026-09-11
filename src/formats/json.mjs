@@ -1,5 +1,5 @@
 import winston from 'winston';
-import { redactValue, safeSerialize } from '@eliware/redact';
+import { safeSerialize } from '@eliware/redact';
 
 const messageSymbol = Symbol.for('message');
 const sanitizedSymbol = Symbol('sanitized');
@@ -9,7 +9,7 @@ export const jsonFormat = (redact, timestamp) => {
   const sanitize = winston.format((info) => {
     const { level, message, ...metadata } = info;
     const safeMessage = typeof message === 'string' ? message : safeSerialize(message, { keys: [] });
-    const sanitized = { level, message: safeMessage, ...safeSerialize(redactValue(metadata, redact), redact) };
+    const sanitized = { level, message: safeMessage, ...safeSerialize(metadata, redact) };
     sanitized.level = info.level;
     info[sanitizedSymbol] = sanitized;
     return info;

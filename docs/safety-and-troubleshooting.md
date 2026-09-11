@@ -1,7 +1,7 @@
 # Safety and troubleshooting
 
 Never log credentials, access tokens, private keys, or other sensitive values.
-Configure `redactKeys` for known sensitive metadata and review custom
+Configure `keys` for known sensitive metadata and review custom
 transports before enabling them. Redaction is delegated to
 `@eliware/redact`, which also provides defensive serialization for errors,
 BigInts, arrays, circular values, and hostile objects.

@@ -7,8 +7,8 @@ export const createLogger = ({
   transports,
   format = 'text',
   timestamp = false,
-  redactKeys = []
+  keys = []
 } = {}) => {
-  const options = normalizeLoggerOptions({ level, transports, format, timestamp, redactKeys });
+  const options = normalizeLoggerOptions({ level, transports, format, timestamp, keys });
   return patchLoggerLevels(buildLogger(options));
 };

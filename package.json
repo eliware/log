@@ -11,7 +11,9 @@
         "README.md",
         "LICENSE",
         "RELEASE_NOTES.md",
-        "examples"
+        "examples",
+        "docs",
+        "specs"
     ],
     "exports": {
         ".": {
@@ -61,7 +63,7 @@
         "typescript": "^7.0.2"
     },
     "dependencies": {
-        "@eliware/redact": "^6.0.0",
+        "@eliware/redact": "file:../../Users/russe/src/redact",
         "winston": "^3.17.0"
     }
 }

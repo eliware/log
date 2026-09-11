@@ -13,7 +13,7 @@ export declare function createLogger(options?: {
   transports?: import('winston').Transport[];
   format?: 'text' | 'json';
   timestamp?: boolean;
-  redactKeys?: string[];
+  keys?: string[];
 }): import('winston').Logger & {
   debug(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
   info(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
@@ -27,24 +27,13 @@ export type LoggerWithConfiguredLevels = import('winston').Logger & { [level: st
 /**
  * Recursive JSON-safe result returned by safeSerialize.
  */
-export type SafeSerializedValue = null | boolean | number | string | SafeSerializedValue[] | { [key: string]: SafeSerializedValue };
-
 /**
  * Safely serializes metadata without invoking toJSON.
  * Error custom properties are intentionally omitted; only name, message, and stack are retained.
  */
-export declare function safeSerialize(value: unknown, options?: RedactionOptions): SafeSerializedValue;
+export declare function safeSerialize(value: unknown, options?: RedactionOptions): unknown;
 
-export interface RedactionOptions {
-  keys?: Iterable<string>;
-  redactKeys?: Iterable<string>;
-  marker?: string;
-  maxDepth?: number;
-  maxKeys?: number;
-  maxArray?: number;
-  maxString?: number;
-  circularMarker?: string;
-}
+export type RedactionOptions = import('@eliware/redact').SerializationOptions;
 
 /**
  * Default logger instance.

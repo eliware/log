@@ -11,13 +11,13 @@ const logger = createLogger({
   level: 'info',
   format: 'json',
   timestamp: true,
-  redactKeys: ['authorization', 'token'],
+  keys: ['authorization', 'token'],
   transports: [new winston.transports.Console()]
 });
 ```
 
 Supported options are `level`, `transports`, `format` (`text` or `json`),
-`timestamp`, and `redactKeys`. Redaction and defensive serialization are
+`timestamp`, and `keys`. Redaction and defensive serialization are
 provided by `@eliware/redact`; keys are matched case-insensitively through
 nested metadata and arrays.
 

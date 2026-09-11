@@ -1,8 +1,8 @@
 # [![eliware.org](https://eliware.org/logos/brand.png)](https://discord.gg/M6aTR9eTwN)
 
-## @eliware/log [![npm version](https://img.shields.io/npm/v/@eliware/log.svg)](https://www.npmjs.com/package/@eliware/log) [![license](https://img.shields.io/github/license/eliware/log.svg)](LICENSE) [![build status](https://github.com/eliware/log/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eliware/log/actions)
+## @eliware/log [![npm version](https://img.shields.io/npm/v/@eliware/log.svg)](https://www.npmjs.com/package/@eliware/log) [![license](https://img.shields.io/github/license/eliware/log.svg)](LICENSE) [![build status](https://github.com/eliware/log/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eliware/log/actions/workflows/nodejs.yml)
 
-> A minimal, flexible logging library for Node.js, built on top of [winston](https://github.com/winstonjs/winston). Supports ESM, with TypeScript types included.
+> Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by [Winston](https://github.com/winstonjs/winston).
 
 ---
 
@@ -99,13 +99,13 @@ Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
 - `transports` (array): Array of winston transports (default: Console)
 - `format` (`text` or `json`): Output format (default: `text`)
 - `timestamp` (boolean): Include timestamps in JSON output (default: `false`)
-- `redactKeys` (string[]): Metadata keys to redact, case-insensitively
+- `keys` (string[]): Metadata keys to redact, case-insensitively
 
 **Returns:** a `winston.Logger` with the configured transports, format, timestamp behavior, and redaction rules.
 
 ### safeSerialize(value, options?)
 
-Safely serializes a value for logging without invoking `toJSON`. Serialization and redaction are provided by [`@eliware/redact`](https://github.com/eliware/redact). Pass `{ keys: ['token'] }` or `{ redactKeys: ['token'] }` when using `safeSerialize` directly. Logger `redactKeys` options are forwarded to that library for recursive, case-insensitive metadata redaction.
+Safely serializes a value for logging without invoking `toJSON`. Serialization and redaction are provided by [`@eliware/redact`](https://github.com/eliware/redact). Pass `{ keys: ['token'] }` when using `safeSerialize` directly. Logger `keys` options are forwarded to that library for recursive, case-insensitive metadata redaction.
 
 ## TypeScript
 
@@ -117,7 +117,7 @@ export declare function createLogger(options?: {
   transports?: import('winston').Transport[];
   format?: 'text' | 'json';
   timestamp?: boolean;
-  redactKeys?: string[];
+  keys?: string[];
 }): import('winston').Logger & {
   debug(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
   info(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
@@ -138,9 +138,9 @@ export default log;
 
 ## Errors / Troubleshooting
 
-Use `redactKeys` for sensitive metadata; it applies to metadata keys, not log message text. Redaction and defensive serialization are delegated to `@eliware/redact`, including nested objects, arrays, errors, circular values, and limits. JSON output includes timestamps only when `timestamp: true`; text output safely serializes objects and BigInt values. Configure transports explicitly for tests and alternate destinations.
+Use `keys` for sensitive metadata; it applies to metadata keys, not log message text. Redaction and defensive serialization are delegated to `@eliware/redact`, including nested objects, arrays, errors, circular values, and limits. JSON output includes timestamps only when `timestamp: true`; text output safely serializes objects and BigInt values. Configure transports explicitly for tests and alternate destinations.
 
-Nested redaction is recursive: `createLogger({ format: 'json', redactKeys: ['token'] })` redacts `token` at any nested object or array level.
+Nested redaction is recursive: `createLogger({ format: 'json', keys: ['token'] })` redacts `token` at any nested object or array level.
 
 ## Development
 
@@ -169,7 +169,7 @@ The package has no import-time external I/O. Inject Winston transports with `cre
 
 ## Security
 
-Do not log secrets or sensitive payloads. Configure `redactKeys` for credential-bearing metadata and review custom transports before enabling them.
+Do not log secrets or sensitive payloads. Configure `keys` for credential-bearing metadata and review custom transports before enabling them.
 
 ## Support
 
@@ -181,7 +181,7 @@ For help, questions, or to chat with the author and community, visit:
 
 ## License
 
-[MIT © 2025 Eli Sterling, eliware.org](LICENSE)
+[MIT © 2026 Eliware](LICENSE)
 
 ## Links
 

@@ -15,7 +15,7 @@ MUST fail clearly.
 
 ## Safety
 
-Sensitive metadata MUST be redacted through `redactKeys`. Error values,
+Sensitive metadata MUST be redacted through `keys`. Error values,
 BigInts, primitives, arrays, circular values, and hostile values MUST be
 handled without leaking secrets or crashing the logger. Importing the package
 MUST NOT perform external I/O.
