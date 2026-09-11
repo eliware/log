@@ -150,7 +150,6 @@ npm run lint
 npm run typecheck
 npm audit --omit=dev --audit-level=moderate
 npm run pack
-npm audit --omit=dev --audit-level=moderate
 
 # after npm install, run the shipped example
 node examples/example.mjs
