@@ -59,18 +59,33 @@
         "provenance": true
     },
     "eliware": {
-        "conventions": {
-            "version": "8.0",
-            "apply": ["general", "library", "npm-published"]
-        },
+        "apply": [
+                "general",
+                "library",
+                "npm-published"
+        ],
         "authority": {
-            "authoritativeFor": ["logging library implementation and public API"],
-            "notAuthoritativeFor": ["shared platform conventions", "cross-cutting operations"]
+            "authoritativeFor": [
+                "logging library implementation and public API"
+            ],
+            "notAuthoritativeFor": [
+                "shared platform conventions",
+                "cross-cutting operations"
+            ]
         },
         "crosslinks": [
-            {"relationship": "documents", "target": "eliware/docs"},
-            {"relationship": "conventions", "target": "eliware/conventions"},
-            {"relationship": "operations", "target": "eliware/operations"}
+            {
+                "relationship": "documents",
+                "target": "eliware/docs"
+            },
+            {
+                "relationship": "conventions",
+                "target": "eliware/conventions"
+            },
+            {
+                "relationship": "operations",
+                "target": "eliware/operations"
+            }
         ]
     },
     "devDependencies": {
