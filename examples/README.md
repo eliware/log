@@ -1,31 +1,21 @@
 # Examples
 
-The example demonstrates the primary `@eliware/log` workflow using placeholder
-metadata only. It performs no external network calls and contains no secrets.
+Purpose: these examples demonstrate the public @eliware/log API using placeholder metadata. They perform no external network calls and contain no secrets.
 
 ## Prerequisites
 
-Use Node.js 26 or newer and install dependencies from a clean checkout:
-
-```bash
-npm ci
-```
+Use Node.js 26 or newer and install dependencies with npm ci.
 
 ## Contents
 
-- [`example.mjs`](example.mjs) — imports the default and named logger exports,
-  creates a configured logger, and logs object, primitive, and array metadata.
-- [`basic`](basic) — runs the same primary workflow from a standalone example directory.
-- [Basic example documentation](basic/README.md)
-- [`basic/example.mjs`](basic/example.mjs) — minimal standalone invocation.
+- [example.mjs](example.mjs) — creates a logger and demonstrates object and primitive metadata.
+- [basic](basic/README.md) — a minimal standalone logger invocation.
+- [basic/example.mjs](basic/example.mjs) — runnable standalone example.
 
-Run it with:
+## Command
 
-```bash
-node examples/example.mjs
-```
+Run node examples/basic/example.mjs from the repository root.
 
-The expected result is several local log lines from the example logger. Replace
-only the placeholder values with non-sensitive test data.
+## Expected result
 
-[Back to the root README](../README.md)
+The command prints one local info log line containing Basic example and placeholder metadata. Run node examples/example.mjs to see the primary logger example output.

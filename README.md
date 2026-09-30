@@ -1,198 +1,118 @@
 # [![eliware.org](https://eliware.org/logos/brand.png)](https://discord.gg/M6aTR9eTwN)
 
-## @eliware/log [![npm version](https://img.shields.io/npm/v/@eliware/log.svg)](https://www.npmjs.com/package/@eliware/log) [![license](https://img.shields.io/github/license/eliware/log.svg)](LICENSE) [![build status](https://github.com/eliware/log/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eliware/log/actions/workflows/nodejs.yml)
-
-> Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by [Winston](https://github.com/winstonjs/winston).
-
----
+## @eliware/log [![npm version](https://img.shields.io/npm/v/@eliware/log.svg)](https://www.npmjs.com/package/@eliware/log) [![license](https://img.shields.io/github/license/eliware/log.svg)](LICENSE) [![CI](https://github.com/eliware/log/actions/workflows/ci.yml/badge.svg)](https://github.com/eliware/log/actions/workflows/ci.yml)
 
 ## Table of Contents
 
 - [Features](#features)
-- [Installation](#installation)
+- [Requirements](#requirements)
+- [Setup](#setup)
 - [Usage](#usage)
-  - [ESM Example](#esm-example)
-- [API](#api)
-- [Configuration](#configuration)
-- [TypeScript](#typescript)
-- [Errors / Troubleshooting](#errors--troubleshooting)
 - [Development](#development)
-- [Documentation](#documentation)
+- [Testing](#testing)
+- [Troubleshooting](#troubleshooting)
+- [Security](#security)
+- [API](#api)
 - [Packaging](#packaging)
-- [Operations](#operations)
+- [Examples](#examples)
 - [Support](#support)
 - [License](#license)
 - [Links](#links)
 
 ## Features
 
-- Simple, consistent logging API for Node.js
-- Built on [winston](https://github.com/winstonjs/winston)
-- Supports ESM
-- Default and named exports for maximum flexibility
-- TypeScript type definitions included
-- Supports structured JSON output with optional timestamps
-- Supports child loggers with persistent context
-- Serializes Error objects with name, message, and stack
-- Supports configurable metadata redaction
-- Exports `safeSerialize` for defensive metadata summarization
-- **Supports logging primitives and arrays as meta:**
-  - `log.info('msg', 42)` logs `{ value: 42 }`
-  - `log.info('msg', [1,2,3])` logs `{ value: [1,2,3] }`
+Purpose: @eliware/log provides structured logging with redaction and defensive serialization for Node.js applications.
+
+The package description is: Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by Winston.
+
+- Provides a small, tested native ESM library surface.
+- Includes public declarations, examples, documentation, and release notes.
+- Uses shared validation scripts and an explicit package contents allowlist.
+
+Maintained by Eliware <eliware@eliware.org>. Author: Eliware <eliware@eliware.org>. License: MIT. See [LICENSE](LICENSE).
+
+Documentation: [docs](docs/README.md) · [specifications](specs/README.md) · [examples](examples/README.md)
 
 ## Requirements
 
-- Node.js 26 or newer
-- Node.js 26 is the minimum supported runtime.
+- Node.js 26.x with native ESM support.
+- No environment variables or runtime configuration files are required.
 
-## Installation
+## Setup
 
-```bash
-npm install @eliware/log
-```
-
-## Usage
-
-### ESM Example
-
-```js
-// Example usage for ESM
-import log, { log as namedLog, createLogger } from '@eliware/log';
-
-log.info('Hello from example.mjs (default import)', { foo: 'bar' });
-log.info('Primitive value', 42); // primitive value
-log.info('Array value', [1,2,3]); // array value
-
-namedLog.info('Hello from example.mjs (named import)', { foo: 'bar' });
-namedLog.info('Primitive value', 'test'); // primitive value
-
-const customLogger = createLogger({ level: 'debug' });
-customLogger.debug('Custom logger debug message', { custom: true });
-customLogger.debug('Primitive debug', true); // primitive value
-```
-
-## API
-
-### log (default and named export)
-
-A pre-configured logger instance. Available as both the default and a named export (`log`).
-
-- `.info(message, meta?)`
-- `.debug(message, meta?)`
-- `.warn(message, meta?)`
-- `.error(message, meta?)`
-- ...and all other [winston](https://github.com/winstonjs/winston) logger methods.
-
-**Meta argument:**
-
-- If you pass a primitive or array as the second argument, it will be logged as `{ value: ... }`.
-- If you pass an object, it will be logged as usual.
+Run npm install @eliware/log to install the package. This checkout declares version 9.0.0 in package.json; verify the currently published version in the npm registry. The runtime entrypoint is src/index.mjs and declarations are in index.d.ts.
 
 ### Configuration
 
-### createLogger(options)
+The logger has no environment-variable or configuration-file settings. Configure `createLogger` with supported options: `level`, `transports`, `format` (`text` or `json`), `timestamp`, and `keys` for metadata redaction. The `safeSerialize` helper accepts redaction options supported by `@eliware/redact`. These API options are runtime configuration; package metadata and deployment settings are not.
 
-Creates a new [winston](https://github.com/winstonjs/winston) logger instance.
+## Usage
 
-**Options:**
+Create a logger and write a local message:
 
-- `level` (string): Log level (default: `'info'`; invalid values throw a `TypeError`)
-- `transports` (array): Array of winston transports (default: Console)
-- `format` (`text` or `json`): Output format (default: `text`)
-- `timestamp` (boolean): Include timestamps in JSON output (default: `false`)
-- `keys` (string[]): Metadata keys to redact, case-insensitively
-
-**Returns:** a `winston.Logger` with the configured transports, format, timestamp behavior, and redaction rules.
-
-### safeSerialize(value, options?)
-
-Safely serializes a value for logging without invoking `toJSON`. Serialization and redaction are provided by [`@eliware/redact`](https://github.com/eliware/redact). Pass `{ keys: ['token'] }` when using `safeSerialize` directly. Logger `keys` options are forwarded to that library for recursive, case-insensitive metadata redaction.
-
-## TypeScript
-
-Type definitions are included:
-
-```ts
-export declare function createLogger(options?: {
-  level?: string;
-  transports?: import('winston').Transport[];
-  format?: 'text' | 'json';
-  timestamp?: boolean;
-  keys?: string[];
-}): import('winston').Logger & {
-  debug(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  info(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  warn(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  error(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-};
-export type SafeSerializedValue = null | boolean | number | string | SafeSerializedValue[] | { [key: string]: SafeSerializedValue };
-export declare function safeSerialize(value: unknown, options?: RedactionOptions): SafeSerializedValue;
-export declare const log: import('winston').Logger & {
-  debug(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  info(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  warn(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-  error(message: unknown, meta?: unknown, ...args: unknown[]): import('winston').Logger;
-} & LoggerWithConfiguredLevels;
-export type LoggerWithConfiguredLevels = import('winston').Logger & { [level: string]: unknown };
-export default log;
+```js
+import { createLogger } from "@eliware/log";
+const logger = createLogger({ format: "json", timestamp: true });
+logger.info("Example", { requestId: "demo" });
 ```
 
-## Errors / Troubleshooting
-
-Use `keys` for sensitive metadata; it applies to metadata keys, not log message text. Redaction and defensive serialization are delegated to `@eliware/redact`, including nested objects, arrays, errors, circular values, and limits. JSON output includes timestamps only when `timestamp: true`; text output safely serializes objects and BigInt values. Configure transports explicitly for tests and alternate destinations.
-
-Nested redaction is recursive: `createLogger({ format: 'json', keys: ['token'] })` redacts `token` at any nested object or array level.
+Prerequisites: Node.js 26 and an ESM project with @eliware/log installed.
+Command: node examples/basic/example.mjs.
+Expected result: one local info log line with placeholder metadata.
+The package entrypoint is src/index.mjs; public declarations are in index.d.ts. The package version is 9.0.0 in package.json; verify its release in the npm registry.
 
 ## Development
 
-```bash
-npm test
-npm run lint
-npm run typecheck
-npm audit --omit=dev --audit-level=moderate
-npm run pack
+Read AGENTS.md, docs/README.md, and specs/README.md before changing the logger contract. Implementation is under src/ and mirrored tests are under tests/. Use npm ci to install the lockfile.
 
-# after npm install, run the shipped example
-node examples/example.mjs
-```
+## Testing
 
-## Documentation
+Run `npm test` for aggregate validation and coverage. Use `npm run lint`, `npm run audit`, `npm run format:check`, `npm run typecheck`, and `npm run pack` for the applicable focused checks. `npm run format` writes formatted files; `npm run format:check` is read-only.
 
-- [End-user documentation](docs/README.md)
-- [Specifications](specs/README.md)
-- [Runnable examples](examples/README.md)
-- [Release notes](RELEASE_NOTES.md)
+## Troubleshooting
 
-## Operations
-
-## Packaging
-
-The published package includes the runtime source, declarations, documentation,
-specifications, examples, license, and release notes. Validate the package with
-`npm run pack` before publishing; releases use exact `v#.#.#` tags.
-
-The package has no import-time external I/O. Inject Winston transports with `createLogger()` for application-specific destinations and configure the explicit `level` option for runtime verbosity. The public package entrypoint is composed in `src/index.mjs`; consumers should import from `@eliware/log`, not from internal source paths. Metadata is sanitized eagerly before formatting so records are deterministic even when a transport later filters them by level. Custom transports that add sensitive metadata after formatting must sanitize those additions themselves.
+Use Node.js 26. Internal src modules are not separately exported. Unsupported logger options fail clearly; consult the specifications and safety guide.
 
 ## Security
 
-Do not log secrets or sensitive payloads. Configure `keys` for credential-bearing metadata and review custom transports before enabling them.
+Redaction and defensive serialization reduce exposure but do not guarantee that unknown sensitive values are detected. Do not send secrets to a logger or include them in source, tests, examples, or issue reports.
+
+## API
+
+The package exports createLogger(options), a default logger, named log, and safeSerialize. Logger options include level, transports, format (text or json), timestamp, and redaction keys. TypeScript declarations are in index.d.ts.
+
+## Packaging
+
+The intentional package allowlist is src/, index.d.ts, README.md, docs/, examples/, specs/, LICENSE, and RELEASE_NOTES.md.
+
+Validate packed contents with npm run pack; the shared pack check must pass and the packed files must match the allowlist before release consideration.
+
+Public publication uses npm provenance and an exact version tag matching package.json after Ubuntu validation. Verify the exact version in the npm registry after an explicitly authorized publication handoff.
+
+## Examples
+
+Runnable examples and prerequisites are indexed in examples/README.md. Start with the basic example, which uses placeholder metadata and no external I/O.
 
 ## Support
 
-For help, questions, or to chat with the author and community, visit:
-
-[![Discord](https://eliware.org/logos/discord_96.png)](https://discord.gg/M6aTR9eTwN)[![eliware.org](https://eliware.org/logos/eliware_96.png)](https://discord.gg/M6aTR9eTwN)
+[![Discord](https://eliware.org/logos/discord_96.png)](https://discord.gg/M6aTR9eTwN)
 
 **[eliware.org on Discord](https://discord.gg/M6aTR9eTwN)**
 
+Use the [Eliware Discord community](https://discord.gg/M6aTR9eTwN), [GitHub issues](https://github.com/eliware/log/issues), or [eliware@eliware.org](mailto:eliware@eliware.org). Include relevant logger options and redacted diagnostics; do not include secrets.
+
 ## License
 
-[MIT © 2026 Eliware](LICENSE)
+MIT. See [LICENSE](LICENSE).
 
 ## Links
 
-- [Home Page](https://eliware.org)
-- [GitHub](https://github.com/eliware/log)
-- [npm](https://www.npmjs.com/package/@eliware/log)
-- [Discord](https://discord.gg/M6aTR9eTwN)
-- [Winston Logger](https://github.com/winstonjs/winston)
+- [Eliware home](https://eliware.org)
+- [Eliware GitHub organization](https://github.com/eliware)
+- [GitHub repository](https://github.com/eliware/log)
+- [npm package](https://www.npmjs.com/package/@eliware/log)
+- [Documentation](docs/README.md)
+- [Specifications](specs/README.md)
+- [Canonical repository profile specifications](https://github.com/eliware/test/blob/main/specs/conventions/README.md)
+- [Runnable examples](examples/README.md)
+- [Release notes](RELEASE_NOTES.md)

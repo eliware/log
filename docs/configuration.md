@@ -4,15 +4,15 @@ Create a logger with `createLogger()` and inject transports when an application
 needs a destination other than the default console transport.
 
 ```js
-import winston from 'winston';
-import { createLogger } from '@eliware/log';
+import winston from "winston";
+import { createLogger } from "@eliware/log";
 
 const logger = createLogger({
-  level: 'info',
-  format: 'json',
+  level: "info",
+  format: "json",
   timestamp: true,
-  keys: ['authorization', 'token'],
-  transports: [new winston.transports.Console()]
+  keys: ["authorization", "token"],
+  transports: [new winston.transports.Console()],
 });
 ```
 

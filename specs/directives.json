@@ -1,0 +1,12 @@
+{
+  "version": "9.0",
+  "repositoryId": "eliware/log",
+  "description": "Applicable shared profiles and repository requirements.",
+  "directives": [
+    {
+      "id": "E-102",
+      "source": "eliware/test",
+      "profiles": ["general", "library", "npm-published"]
+    }
+  ]
+}

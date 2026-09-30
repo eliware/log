@@ -1,3 +1,3 @@
-import log from '@eliware/log';
+import log from "@eliware/log";
 
-log.info('Basic example', { placeholder: 'value' });
+log.info("Basic example", { placeholder: "value" });

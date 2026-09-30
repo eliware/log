@@ -1,99 +1,109 @@
 {
-    "name": "@eliware/log",
-    "type": "module",
-    "version": "6.0.0",
-    "description": "Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by Winston.",
-    "main": "src/index.mjs",
-    "types": "src/index.d.ts",
-    "sideEffects": false,
-    "files": [
-        "src",
-        "README.md",
-        "LICENSE",
-        "RELEASE_NOTES.md",
-        "examples",
-        "docs",
-        "specs"
-    ],
-    "exports": {
-        ".": {
-            "import": "./src/index.mjs",
-            "types": "./src/index.d.ts"
-        }
-    },
-    "scripts": {
-        "test": "eliware-test",
-        "lint": "eliware-test --lint",
-        "typecheck": "tsc --project tsconfig.json",
-        "pack": "npm pack --dry-run"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/eliware/log"
-    },
-    "keywords": [
-        "logging",
-        "logger",
-        "nodejs",
-        "debugging",
-        "console",
-        "log",
-        "winston",
-        "structured-logging",
-        "structured-logger",
-        "redaction",
-        "serialization",
-        "child-logger"
-    ],
-    "author": "Eliware",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/eliware/log/issues"
-    },
-    "homepage": "https://github.com/eliware/log#readme",
-    "engines": {
-        "node": ">=26"
-    },
-    "publishConfig": {
-        "access": "public",
-        "provenance": true
-    },
-    "eliware": {
-        "apply": [
-                "general",
-                "library",
-                "npm-published"
-        ],
-        "authority": {
-            "authoritativeFor": [
-                "logging library implementation and public API"
-            ],
-            "notAuthoritativeFor": [
-                "shared platform conventions",
-                "cross-cutting operations"
-            ]
-        },
-        "crosslinks": [
-            {
-                "relationship": "documents",
-                "target": "eliware/docs"
-            },
-            {
-                "relationship": "conventions",
-                "target": "eliware/conventions"
-            },
-            {
-                "relationship": "operations",
-                "target": "eliware/operations"
-            }
-        ]
-    },
-    "devDependencies": {
-        "@eliware/test": "^6.0.1",
-        "typescript": "^7.0.2"
-    },
-    "dependencies": {
-        "@eliware/redact": "file:../../Users/russe/src/redact",
-        "winston": "^3.17.0"
+  "name": "@eliware/log",
+  "type": "module",
+  "version": "9.0.0",
+  "description": "Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by Winston.",
+  "main": "./src/index.mjs",
+  "types": "./index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "src/",
+    "index.d.ts",
+    "README.md",
+    "LICENSE",
+    "RELEASE_NOTES.md",
+    "examples/",
+    "docs/",
+    "specs/"
+  ],
+  "exports": {
+    ".": {
+      "import": "./src/index.mjs",
+      "types": "./index.d.ts"
     }
+  },
+  "scripts": {
+    "test": "eliware-test",
+    "lint": "eliware-test --lint",
+    "audit": "eliware-test --audit",
+    "format": "eliware-test --format",
+    "format:check": "eliware-test --format-check",
+    "typecheck": "tsc --project tsconfig.json",
+    "pack": "eliware-test --pack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eliware/log"
+  },
+  "keywords": [
+    "logging",
+    "logger",
+    "nodejs",
+    "debugging",
+    "console",
+    "log",
+    "winston",
+    "structured-logging",
+    "structured-logger",
+    "redaction",
+    "serialization",
+    "child-logger"
+  ],
+  "author": "Eliware <eliware@eliware.org>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eliware/log/issues"
+  },
+  "homepage": "https://github.com/eliware/log#readme",
+  "engines": {
+    "node": ">=26 <27"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "eliware": {
+    "apply": [
+      "general",
+      "library",
+      "npm-published"
+    ]
+  },
+  "devDependencies": {
+    "@eliware/test": "^8.0.0",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@eliware/redact": "^6.0.0",
+    "winston": "^3.19.0"
+  },
+  "private": false,
+  "prettier": {
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": false,
+    "quoteProps": "as-needed",
+    "jsxSingleQuote": false,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "arrowParens": "always",
+    "proseWrap": "preserve",
+    "endOfLine": "lf"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.mjs"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.mjs"
+    ],
+    "coverageReporters": [
+      "text",
+      "json-summary"
+    ]
+  }
 }

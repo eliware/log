@@ -1,13 +1,13 @@
-import { patchLoggerLevels } from './logger-levels.mjs';
-import { normalizeLoggerOptions } from './configuration/normalize-options.mjs';
-import { buildLogger } from './configuration/build-logger.mjs';
+import { patchLoggerLevels } from "./logger-levels.mjs";
+import { normalizeLoggerOptions } from "./configuration/normalize-options.mjs";
+import { buildLogger } from "./configuration/build-logger.mjs";
 
 export const createLogger = ({
-  level = 'info',
+  level = "info",
   transports,
-  format = 'text',
+  format = "text",
   timestamp = false,
-  keys = []
+  keys = [],
 } = {}) => {
   const options = normalizeLoggerOptions({ level, transports, format, timestamp, keys });
   return patchLoggerLevels(buildLogger(options));
