@@ -1,6 +1,6 @@
 # @eliware/log specification
 
-- [Applicable profiles](directives.json)
+- [Package directives](directives.json)
 
 This directory defines the mandatory public behavior of `@eliware/log`. The
 requirements are normative; explanatory implementation details are secondary.

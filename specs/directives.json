@@ -1,12 +1,16 @@
 {
   "version": "9.0",
-  "repositoryId": "eliware/log",
-  "description": "Applicable shared profiles and repository requirements.",
+  "description": "Local requirements for the @eliware/log package.",
   "directives": [
     {
       "id": "E-102",
-      "source": "eliware/test",
-      "profiles": ["general", "library", "npm-published"]
+      "dos": [
+        "Provide the documented native ESM logger API with configurable levels, formats, transports, timestamps, child context, and safe serialization.",
+        "Redact sensitive metadata through configured keys and handle supported hostile values without leaking secrets or crashing."
+      ],
+      "donts": [
+        "Do not perform external I/O during import or provide application-specific transport backends, credential storage, log retention, or deployment orchestration."
+      ]
     }
   ]
 }
