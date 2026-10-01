@@ -70,7 +70,7 @@
     ]
   },
   "devDependencies": {
-    "@eliware/test": "^8.0.0",
+    "@eliware/test": "^9.0.0",
     "typescript": "^7.0.2"
   },
   "dependencies": {
