@@ -109,7 +109,8 @@ MIT. See [LICENSE](LICENSE).
 
 - [Eliware home](https://eliware.org)
 - [Eliware GitHub organization](https://github.com/eliware)
-- [GitHub repository](https://github.com/eliware/log)
+- [Discord](https://discord.gg/M6aTR9eTwN)
+- [GitHub repository](https://github.com/eliware/log) (`git+https://github.com/eliware/log.git`)
 - [npm package](https://www.npmjs.com/package/@eliware/log)
 - [Documentation](docs/README.md)
 - [Specifications](specs/README.md)
