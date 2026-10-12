@@ -1,6 +1,8 @@
 # [![eliware.org](https://eliware.org/logos/brand.png)](https://discord.gg/M6aTR9eTwN)
 
-## @eliware/log [![npm version](https://img.shields.io/npm/v/@eliware/log.svg)](https://www.npmjs.com/package/@eliware/log) [![license](https://img.shields.io/github/license/eliware/log.svg)](LICENSE) [![CI](https://github.com/eliware/log/actions/workflows/ci.yml/badge.svg)](https://github.com/eliware/log/actions/workflows/ci.yml)
+## @eliware/log [![npm](https://img.shields.io/npm/v/@eliware/log)](https://www.npmjs.com/package/@eliware/log) [![License](https://img.shields.io/github/license/eliware/log)](https://github.com/eliware/log/blob/main/LICENSE) [![CI](https://github.com/eliware/log/actions/workflows/ci.yaml/badge.svg)](https://github.com/eliware/log/actions/workflows/ci.yaml)
+
+Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by Winston.
 
 ## Table of Contents
 
@@ -16,104 +18,110 @@
 - [Packaging](#packaging)
 - [Examples](#examples)
 - [Support](#support)
-- [License](#license)
 - [Links](#links)
+- [License](#license)
 
 ## Features
 
-Purpose: @eliware/log provides structured logging with redaction and defensive serialization for Node.js applications.
+`@eliware/log` provides structured logging for Node.js. It supports metadata redaction and defensive serialization.
 
-The package description is: Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by Winston.
+- Use `createLogger()` to create a Winston logger.
+- Import the default `log` logger or the named `log` export.
+- Use `safeSerialize()` to serialize values safely.
+- Configure text or JSON output, timestamps, transports, and redaction keys.
 
-- Provides a small, tested native ESM library surface.
-- Includes public declarations, examples, documentation, and release notes.
-- Uses shared validation scripts and an explicit package contents allowlist.
-
-Maintained by Eliware <eliware@eliware.org>. Author: Eliware <eliware@eliware.org>. License: MIT. See [LICENSE](LICENSE).
-
-Documentation: [docs](docs/README.md) · [specifications](specs/README.md) · [examples](examples/README.md)
+See [documentation](docs/README.md), [specifications](specs/README.md), and [examples](examples/README.md).
 
 ## Requirements
 
-- Node.js 26.x with native ESM support.
-- No environment variables or runtime configuration files are required.
+- Use Node.js 26 or later.
+- Use a native ESM project.
+- Configure the logger in application code. The package has no required environment variables.
 
 ## Setup
 
-Run npm install @eliware/log to install the package. This checkout declares version 9.0.0 in package.json; verify the currently published version in the npm registry. The runtime entrypoint is src/index.mjs and declarations are in index.d.ts.
+Install the package with npm:
 
-### Configuration
+```bash
+npm install @eliware/log
+```
 
-The logger has no environment-variable or configuration-file settings. Configure `createLogger` with supported options: `level`, `transports`, `format` (`text` or `json`), `timestamp`, and `keys` for metadata redaction. The `safeSerialize` helper accepts redaction options supported by `@eliware/redact`. These API options are runtime configuration; package metadata and deployment settings are not.
+The package version is `12.0.0`. Check the [npm package](https://www.npmjs.com/package/@eliware/log) for the published version.
 
 ## Usage
 
-Create a logger and write a local message:
+Create a logger and write a message with metadata:
 
 ```js
 import { createLogger } from "@eliware/log";
+
 const logger = createLogger({ format: "json", timestamp: true });
 logger.info("Example", { requestId: "demo" });
 ```
 
-Prerequisites: Node.js 26 and an ESM project with @eliware/log installed.
-Command: node examples/basic/example.mjs.
+Prerequisites: Node.js 26 and an ESM project with `@eliware/log` installed.
+Command: `node examples/basic/example.mjs`.
 Expected result: one local info log line with placeholder metadata.
-The package entrypoint is src/index.mjs; public declarations are in index.d.ts. The package version is 9.0.0 in package.json; verify its release in the npm registry.
+
+See [release notes](RELEASE_NOTES.md) for package changes.
 
 ## Development
 
-Read AGENTS.md, docs/README.md, and specs/README.md before changing the logger contract. Implementation is under src/ and mirrored tests are under tests/. Use npm ci to install the lockfile.
+Read [AGENTS.md](AGENTS.md), [documentation index](docs/README.md), and [specification index](specs/README.md) before you change the logger contract.
+Source modules live under `src/`. Matching tests live under `tests/`.
+Run `npm ci` to install the lockfile dependencies.
 
 ## Testing
 
-Run `npm test` for aggregate validation and coverage. Use `npm run lint`, `npm run audit`, `npm run format:check`, `npm run typecheck`, and `npm run pack` for the applicable focused checks. `npm run format` writes formatted files; `npm run format:check` is read-only.
+Run `npm test` for aggregate validation, coverage, lint, format, audit, type, and package checks.
+Run `npm run lint`, `npm run audit`, `npm run format:check`, `npm run typecheck`, or `npm run pack` for focused checks.
+Run `npm run format` to write formatted files. Use `npm run format:check` for a read-only check.
 
 ## Troubleshooting
 
-Use Node.js 26. Internal src modules are not separately exported. Unsupported logger options fail clearly; consult the specifications and safety guide.
+Use Node.js 26 or later. Internal source modules are not public package exports.
+Invalid logger options raise a `TypeError`. Check the [configuration guide](docs/configuration.md) and [safety guide](docs/safety-and-troubleshooting.md).
 
 ## Security
 
-Redaction and defensive serialization reduce exposure but do not guarantee that unknown sensitive values are detected. Do not send secrets to a logger or include them in source, tests, examples, or issue reports.
+Do not log credentials, access tokens, private keys, or other sensitive values.
+Set `keys` for known sensitive metadata. Redaction does not detect every sensitive value.
+Review custom Winston transports before use.
 
 ## API
 
-The package exports createLogger(options), a default logger, named log, and safeSerialize. Logger options include level, transports, format (text or json), timestamp, and redaction keys. TypeScript declarations are in index.d.ts.
+The package exports `createLogger(options)`, `safeSerialize(value, options)`, a default logger, and named `log`.
+Logger options include `level`, `transports`, `format`, `timestamp`, and `keys`.
+Type declarations are in `src/index.d.ts`.
 
 ## Packaging
 
-The intentional package allowlist is src/, index.d.ts, README.md, docs/, examples/, specs/, LICENSE, and RELEASE_NOTES.md.
-
-Validate packed contents with npm run pack; the shared pack check must pass and the packed files must match the allowlist before release consideration.
-
-Public publication uses npm provenance and an exact version tag matching package.json after Ubuntu validation. Verify the exact version in the npm registry after an explicitly authorized publication handoff.
+The package includes `src/`, `docs/`, `README.md`, `AGENTS.md`, `LICENSE`, `RELEASE_NOTES.md`, `examples/`, `specs/`, and `.env.example`.
+Run `npm run pack` to check package contents.
+Publication requires the Operations release handoff. The repository does not grant publication authority.
 
 ## Examples
 
-Runnable examples and prerequisites are indexed in examples/README.md. Start with the basic example, which uses placeholder metadata and no external I/O.
+Read [examples/README.md](examples/README.md) for prerequisites, commands, and expected results.
+Start with [the basic example](examples/basic/README.md). It uses placeholder metadata and makes no external requests.
 
 ## Support
 
-[![Discord](https://eliware.org/logos/discord_96.png)](https://discord.gg/M6aTR9eTwN)
+For help, questions, or to chat with the author and community, visit:
+
+[![Discord](https://eliware.org/logos/discord_96.png)](https://discord.gg/M6aTR9eTwN)[![eliware.org](https://eliware.org/logos/eliware_96.png)](https://discord.gg/M6aTR9eTwN)
 
 **[eliware.org on Discord](https://discord.gg/M6aTR9eTwN)**
 
-Use the [Eliware Discord community](https://discord.gg/M6aTR9eTwN), [GitHub issues](https://github.com/eliware/log/issues), or [eliware@eliware.org](mailto:eliware@eliware.org). Include relevant logger options and redacted diagnostics; do not include secrets.
+## Links
+
+- [Home Page](https://eliware.org)
+- [GitHub Org](https://github.com/eliware)
+- [GitHub Repo](https://github.com/eliware/log)
+- [Bug Reports](https://github.com/eliware/log/issues)
+- [npm](https://www.npmjs.com/package/@eliware/log)
+- [Discord](https://discord.gg/M6aTR9eTwN)
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
-
-## Links
-
-- [Eliware home](https://eliware.org)
-- [Eliware GitHub organization](https://github.com/eliware)
-- [Discord](https://discord.gg/M6aTR9eTwN)
-- [GitHub repository](https://github.com/eliware/log) (`git+https://github.com/eliware/log.git`)
-- [npm package](https://www.npmjs.com/package/@eliware/log)
-- [Documentation](docs/README.md)
-- [Specifications](specs/README.md)
-- [Canonical repository profile specifications](https://github.com/eliware/test/blob/main/specs/conventions/README.md)
-- [Runnable examples](examples/README.md)
-- [Release notes](RELEASE_NOTES.md)
+[MIT © Eliware](LICENSE)

@@ -9,7 +9,6 @@ Use Node.js 26 or newer and install dependencies with npm ci.
 ## Contents
 
 - [example.mjs](example.mjs) — creates a logger and demonstrates object and primitive metadata.
-- [basic](basic/README.md) — a minimal standalone logger invocation.
 - [basic/example.mjs](basic/example.mjs) — runnable standalone example.
 
 ## Command

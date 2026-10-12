@@ -1,5 +1,11 @@
 # Release Notes
 
+## 12.0.0 — 2026-10-12
+
+### Changed
+
+- Updated the redaction dependency to `@eliware/redact` v12.
+
 ## 9.0.0 — 2026-09-30
 
 ### Changed

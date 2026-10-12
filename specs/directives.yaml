@@ -1,0 +1,15 @@
+version: "12.0"
+description: Defines mandatory public behavior for @eliware/log.
+directives:
+  - id: E-102.0
+    dos:
+      - Provide default and named log exports, createLogger(), and safeSerialize().
+      - Support native ESM and expose TypeScript declarations through the package exports map.
+      - Support configurable levels, Winston transports, text and JSON formats, timestamps, child context, and primitive or array metadata.
+      - Reject invalid format, transport, and level options with clear errors.
+      - Redact sensitive metadata through configured keys.
+      - Handle errors, BigInts, primitives, arrays, circular values, and hostile values without secret leaks or logger failures.
+      - Avoid external I/O during package import.
+    donts:
+      - Do not provide application-specific transport backends, remote log collection, credential storage, log retention, or deployment orchestration.
+      - Do not claim that redaction detects every sensitive value.

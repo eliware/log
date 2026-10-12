@@ -10,7 +10,7 @@ Repository-wide scope: these instructions apply throughout `eliware/log`; nearer
 
 ## Layout
 
-The required repository structure includes `src/` implementation modules mirrored by `tests/`, public API files `src/index.mjs` and `index.d.ts`, `docs/`, `specs/`, and runnable `examples/`. The package contents are limited by this allowlist: `src/`, `index.d.ts`, `README.md`, `docs/`, `examples/`, `specs/`, `LICENSE`, and `RELEASE_NOTES.md`.
+The required repository structure includes `src/` implementation modules mirrored by `tests/`, public API files `src/index.mjs` and `src/index.d.ts`, `docs/`, `specs/`, and runnable `examples/`. Start `package.json.files` with `src/`, `docs/`, `README.md`, `AGENTS.md`, `LICENSE`, and `RELEASE_NOTES.md`. Add `examples/` and `specs/` in that order. Put `.env.example` last when present. Add safe runtime paths after required paths. Apply all shared package exclusions.
 
 ## Development
 
@@ -30,8 +30,8 @@ Preserve the documented public contract and update its specifications, tests, de
 
 ## Library
 
-The public runtime entrypoint is `@eliware/log`, implemented by `src/index.mjs`; public declarations are in `index.d.ts`. Keep exports and declarations synchronized and test the public API. Compatibility is defined by the public package contract and release notes. Packaging limits package contents to the documented allowlist. Validate types with `npm run typecheck`, behavior and coverage with `npm test`, and consumer package contents with `eliware-test --pack` or `npm run pack` before release consideration.
+The public runtime entrypoint is `@eliware/log`, implemented by `src/index.mjs`; public declarations are in `src/index.d.ts`. Keep exports and declarations synchronized and test the public API. Compatibility is defined by the public package contract and release notes. Validate types with `npm run typecheck`, behavior and coverage with `npm test`, and consumer package contents with `eliware-test --pack` or `npm run pack` before release consideration.
 
 ## npm publication
 
-The package identity is `@eliware/log`; `package.json.version` is the version source and `RELEASE_NOTES.md` records user-visible changes. The exact package contents allowlist is `src/`, `index.d.ts`, `README.md`, `docs/`, `examples/`, `specs/`, `LICENSE`, and `RELEASE_NOTES.md`. The pack validation command is `eliware-test --pack` (also available as `npm run pack`); it must pass and verify the packed files against that allowlist. Publication uses npm provenance and an exact `vMAJOR.MINOR.PATCH` tag matching `package.json`, after Ubuntu validation. After authorized publication, verify that the exact version is available in the public registry. Publication requires explicit authorization through the Operations release handoff; these instructions do not authorize publishing.
+The package identity is `@eliware/log`; `package.json.version` is the version source and `RELEASE_NOTES.md` records user-visible changes. The pack validation command is `eliware-test --pack` (also available as `npm run pack`). It checks actual package files against required paths and exclusions. Publication uses npm provenance and an exact `vMAJOR.MINOR.PATCH` tag matching `package.json`, after Ubuntu validation. After authorized publication, verify that the exact version is available in the public registry. Publication requires explicit authorization through the Operations release handoff; these instructions do not authorize publishing.
