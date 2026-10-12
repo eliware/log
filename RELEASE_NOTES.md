@@ -4,22 +4,17 @@
 
 ### Changed
 
-- Updated the redaction dependency to `@eliware/redact` v12.
+- Updated Winston to v3.19 and `@eliware/redact` to v12.
+- Moved the runtime entrypoint and type declarations under `src/`. Package imports still use `@eliware/log`.
+- Added bounded, recursive serialization for nested metadata, non-string messages, and circular values.
+- Added validation for logger levels, formats, transports, and redaction keys.
+- Added end-user guides and runnable examples for installation, configuration, logging, and safe serialization.
 
-## 9.0.0 — 2026-09-30
+### Breaking changes
 
-### Changed
-
-- Aligned package metadata, directives, scripts, CI, Knit deployment, and package contents with v9 conventions.
-- Replaced the local Redact path dependency with the published @eliware/redact package range.
-- Preserved the logger runtime API and behavior.
-
-## 6.0.0 — 2026-09-06
-
-### Changed
-
-- Raised the minimum supported runtime to Node.js 26.
-- Moved implementation and declarations under src/ and aligned package exports with the library layout.
-- Delegated redaction and defensive serialization to @eliware/redact.
-- Added focused source and test architecture, documentation, specifications, runnable examples, and environment guidance.
-- Standardized package validation and publication workflows.
+- Use `keys` instead of `redactKeys` in `createLogger()` options.
+- Pass a `RedactionOptions` object to `safeSerialize()` instead of a `Set`.
+- Direct `safeSerialize()` calls now use Redact's default key list when you omit options.
+- Set the logger level in code. The `LOG_LEVEL` environment variable no longer sets the default level.
+- Nested objects now serialize recursively within limits instead of reducing them to type, ID, and name summaries.
+- Serialization now uses `[CIRCULAR]`, `[TRUNCATED]`, and `[UNSERIALIZABLE]` markers.
