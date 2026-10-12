@@ -14,8 +14,9 @@ console.log(safeSerialize(value));
 The helper returns JSON-safe values.
 It writes BigInts as text with an `n` suffix.
 It writes `undefined`, functions, symbols, and buffers as text labels.
-It keeps only `name`, `message`, and `stack` fields from Error values.
-It omits custom Error fields.
+It reads `name`, `message`, and `stack` fields from Error values.
+It also serializes enumerable custom Error fields.
+It applies redaction and output limits to those fields.
 
 ## Redaction options
 

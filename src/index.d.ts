@@ -29,7 +29,7 @@ export type SafeSerializedValue =
   null | boolean | number | string | SafeSerializedValue[] | { [key: string]: SafeSerializedValue };
 /**
  * Safely serializes metadata without invoking toJSON.
- * Error custom properties are intentionally omitted; only name, message, and stack are retained.
+ * Error values include name, message, stack, and enumerable custom properties, subject to redaction and limits.
  */
 export declare function safeSerialize(
   value: unknown,
