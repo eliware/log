@@ -5,16 +5,13 @@ import winston from "winston";
 
 test("emits JSON metadata with redaction and timestamps", async () => {
   const stream = new PassThrough();
-  let output = "";
-  stream.on("data", (chunk) => {
-    output += chunk.toString();
-  });
+  const outputReady = new Promise((resolve) => stream.once("data", resolve));
   const logger = winston.createLogger({
     format: jsonFormat({ keys: ["token"] }, true),
     transports: [new winston.transports.Stream({ stream })],
   });
   logger.info("hello", { token: "secret", visible: true });
-  await new Promise((resolve) => setImmediate(resolve));
+  const output = (await outputReady).toString();
   const record = JSON.parse(output.trim());
   expect(record.token).toBe("[REDACTED]");
   expect(record.visible).toBe(true);

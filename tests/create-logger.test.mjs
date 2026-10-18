@@ -9,16 +9,13 @@ test("creates an injectable logger", () => {
 
 test("configures JSON output and redaction", async () => {
   const stream = new PassThrough();
-  let output = "";
-  stream.on("data", (chunk) => {
-    output += chunk.toString();
-  });
+  const outputReady = new Promise((resolve) => stream.once("data", resolve));
   createLogger({
     format: "json",
     keys: ["secret"],
     transports: [new winston.transports.Stream({ stream })],
   }).info("message", { secret: "hidden" });
-  await new Promise((resolve) => setImmediate(resolve));
+  const output = (await outputReady).toString();
   expect(JSON.parse(output.trim()).secret).toBe("[REDACTED]");
 });
 

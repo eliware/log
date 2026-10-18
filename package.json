@@ -1,8 +1,8 @@
 {
   "name": "@eliware/log",
-  "version": "12.0.0",
+  "version": "13.0.0",
   "type": "module",
-  "description": "Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by Winston.",
+  "description": "Structured ESM logging for Node.js with redaction and defensive serialization, backed by Winston.",
   "keywords": [
     "logging",
     "logger",

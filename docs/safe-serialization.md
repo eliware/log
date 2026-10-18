@@ -32,7 +32,7 @@ Pass an options object to set key names, a marker, or output limits.
 | `maxArray`   | `1000`                         | Limit array items.                      |
 | `maxString`  | `10000`                        | Limit strings and value labels.         |
 
-Key checks ignore letter case.
+Key checks ignore uppercase and lowercase differences.
 If you set `keys`, that list replaces the default list.
 The direct `safeSerialize()` call uses the default sensitive key list when you omit options.
 
@@ -47,13 +47,13 @@ It uses `[UNSERIALIZABLE]` when it cannot serialize a value.
 It returns `{}` when it cannot read a retained object property.
 
 The root value starts at depth zero.
-The helper counts a child past `maxDepth` as truncated.
+The helper marks a child deeper than `maxDepth` as truncated.
 The helper adds a marker when it omits array items or object keys.
 
 ## Redaction in logger formats
 
 `createLogger()` sets `keys` to an empty list by default.
-Set the option to protect metadata property names.
+Set the option to redact sensitive metadata property names.
 The option list replaces the default key list from `@eliware/redact`.
 The formatter does not scan string messages for secrets.
 The formatter safely serializes object messages and metadata with the configured keys.

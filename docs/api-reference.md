@@ -42,7 +42,7 @@ Call `logger.child(context)` to make a child logger with shared context.
 
 ## `safeSerialize(value, options)`
 
-Convert a value to a bounded representation for log output.
+Convert a value to a bounded representation for output.
 The function does not call `toJSON()`.
 The result can contain JSON-safe values or text labels for special values.
 

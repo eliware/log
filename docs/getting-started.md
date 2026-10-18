@@ -1,4 +1,4 @@
-# Get Started
+# Start Here
 
 Use this guide to add `@eliware/log` to a Node.js application.
 
@@ -50,9 +50,9 @@ node examples/basic/example.mjs
 ```
 
 The example writes one info record with placeholder metadata.
-It does not send data to a remote service.
+It does not send data to a remote system.
 
-## Choose an entry point
+## Select an entry point
 
 Import `createLogger` to make a logger with custom options.
 Import the default `log` value for the default logger.

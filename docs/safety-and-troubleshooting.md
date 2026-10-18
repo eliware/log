@@ -1,14 +1,14 @@
-# Security and Common Errors
+# Sensitive Data and Errors
 
-Redaction can reduce accidental disclosure.
-It cannot detect every secret.
-Treat all log data as information that users may see.
+Redaction can hide some sensitive values.
+It cannot find every secret.
+Users can see all record data.
 
-## Protect sensitive values
+## Keep sensitive values safe
 
 Do not pass credentials, access tokens, private keys, or passwords to a logger.
 Set `keys` for each sensitive metadata property name.
-Key checks ignore letter case but keep punctuation.
+Key checks ignore uppercase and lowercase differences but keep punctuation.
 Add each spelling that your application uses.
 
 The default logger key list is empty.
@@ -24,17 +24,17 @@ const logger = createLogger({
 });
 ```
 
-Review the output before you send it to another service or person.
+Examine each output before you send it to a different system or person.
 Use fake values in source files, tests, examples, and issue reports.
 
-## Protect transport output
+## Check transport output
 
 Use a custom transport only when you trust its code.
 The package formats each record before it sends the record to a transport.
 A custom transport can add fields or change output.
 Check the final output from every custom transport.
 
-## Fix common errors
+## Correct errors
 
 | Error or symptom                 | Cause                                           | Action                                           |
 | -------------------------------- | ----------------------------------------------- | ------------------------------------------------ |
@@ -48,12 +48,12 @@ Check the final output from every custom transport.
 
 ## Check output
 
-Use `format: "json"` when another tool must parse records.
-Parse one record per line.
+Use `format: "json"` when a tool must parse records.
+Write one record on each line.
 Set `timestamp: true` when each record needs a time value.
 Set `transports: []` in a test when the test needs no output.
 
-## Get help
+## Find help
 
 Read [Configure a logger](configuration.md) for option rules.
 Read [Safe serialization](safe-serialization.md) for limits and markers.

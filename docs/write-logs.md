@@ -74,4 +74,4 @@ It safely serializes non-string messages and metadata.
 
 Pass a Winston transport in the `transports` array.
 Install Winston as a direct application dependency if your application creates its own transport.
-Check custom transport output for extra fields or later format changes.
+Check custom transport output for more fields or later format changes.

@@ -1,5 +1,5 @@
 export const patchLoggerLevels = (logger) => {
-  // Only Winston's configured level methods are part of the primitive-meta contract.
+  // Only configured Winston level methods use the primitive metadata rule.
   const levels = new Set(Object.keys(logger.levels));
   for (const method of levels) {
     const original = logger[method];

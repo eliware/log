@@ -2,7 +2,7 @@
 
 ## @eliware/log [![npm](https://img.shields.io/npm/v/@eliware/log)](https://www.npmjs.com/package/@eliware/log) [![License](https://img.shields.io/github/license/eliware/log)](https://github.com/eliware/log/blob/main/LICENSE) [![CI](https://github.com/eliware/log/actions/workflows/ci.yaml/badge.svg)](https://github.com/eliware/log/actions/workflows/ci.yaml)
 
-Structured, secure ESM logging for Node.js with redaction and defensive serialization, backed by Winston.
+Structured ESM logging for Node.js with redaction and defensive serialization, backed by Winston.
 
 ## Table of Contents
 
@@ -46,7 +46,7 @@ Install the package with npm:
 npm install @eliware/log
 ```
 
-The package version is `12.0.0`. Check the [npm package](https://www.npmjs.com/package/@eliware/log) for the published version.
+The package version is `13.0.0`. Check the [npm package](https://www.npmjs.com/package/@eliware/log) for the published version.
 
 ## Usage
 
@@ -61,7 +61,7 @@ logger.info("Example", { requestId: "demo" });
 
 Prerequisites: Node.js 26 and an ESM project with `@eliware/log` installed.
 Command: `node examples/basic/example.mjs`.
-Expected result: one local info log line with placeholder metadata.
+Expected result: one local info record with placeholder metadata.
 
 See [release notes](RELEASE_NOTES.md) for package changes.
 
@@ -80,13 +80,13 @@ Run `npm run format` to write formatted files. Use `npm run format:check` for a 
 ## Troubleshooting
 
 Use Node.js 26 or later. Internal source modules are not public package exports.
-Invalid logger options raise a `TypeError`. Check the [configuration guide](docs/configuration.md) and [safety guide](docs/safety-and-troubleshooting.md).
+Invalid logger options produce a `TypeError`. Read the [configuration guide](docs/configuration.md) and [safety guide](docs/safety-and-troubleshooting.md).
 
 ## Security
 
-Do not log credentials, access tokens, private keys, or other sensitive values.
-Set `keys` for known sensitive metadata. Redaction does not detect every sensitive value.
-Review custom Winston transports before use.
+Do not write credentials, access tokens, private keys, or other sensitive values to a record.
+Set `keys` for known sensitive metadata. Redaction does not find every sensitive value.
+Examine custom Winston transports before use.
 
 ## API
 

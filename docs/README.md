@@ -1,6 +1,6 @@
-- [Get started](getting-started.md)
+- [Start here](getting-started.md)
 - [API reference](api-reference.md)
 - [Configure a logger](configuration.md)
 - [Write logs](write-logs.md)
 - [Safe serialization](safe-serialization.md)
-- [Security and common errors](safety-and-troubleshooting.md)
+- [Sensitive data and errors](safety-and-troubleshooting.md)
