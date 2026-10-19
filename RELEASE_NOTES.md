@@ -13,6 +13,7 @@
 - Rename the npm publication workflow to `npm.yaml` and align it with the canonical workflow.
 - Update Knit deployment to run `git pull`, `npm ci`, and `npm test` in `/eliware/log`.
 - Update the README, guides, specifications, and repository instructions for Convention 13.
+- Add package features, troubleshooting steps, and data protection guidance to the README.
 
 ### Fixed
 

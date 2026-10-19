@@ -23,7 +23,13 @@ Structured ESM logging for Node.js with redaction and defensive serialization, b
 
 ## Features
 
-Read the [documentation](docs/README.md) and [specifications](specs/README.md).
+- Create Winston loggers with text or JSON output, level filtering, and configurable transports.
+- Add shared context with child loggers for requests or other operations.
+- Redact selected metadata keys before the package sends records to transports.
+- Apply configured output limits to serialized objects and errors. The serializer does not call `toJSON()`.
+- Add timestamps to JSON records when you set `timestamp: true`.
+
+Read the [documentation](docs/README.md) for setup and use. Read the [specifications](specs/README.md) for package requirements.
 
 ## Requirements
 
@@ -60,7 +66,23 @@ Run `npm test` for aggregate validation. Run `npm run lint`, `npm run audit`, `n
 
 ## Troubleshooting
 
+| Problem                                    | Cause                                                             | Action                                            |
+| ------------------------------------------ | ----------------------------------------------------------------- | ------------------------------------------------- |
+| `createLogger()` reports an invalid level  | Winston does not define the level.                                | Set `level` to a level supported by Winston.      |
+| `createLogger()` reports an invalid format | The format is not `text` or `json`.                               | Set `format` to `text` or `json`.                 |
+| `timestamp must be a boolean`              | The `timestamp` option is not Boolean.                            | Set `timestamp` to `true` or `false`.             |
+| `transports must be an array`              | The `transports` option is not an array.                          | Pass an array of Winston transports.              |
+| A log record is missing                    | The configured level filters it, or the transport changes output. | Check the level and inspect the transport output. |
+
+Read [Sensitive data and errors](docs/safety-and-troubleshooting.md) for more help.
+
 ## Security
+
+Set `keys` to the metadata property names that contain sensitive data. The logger does not redact string messages by property name. Remove secrets from messages before you log them.
+
+Inspect the final output from each custom transport. A transport can add fields or change a record. Do not use redaction or bounded serialization as a replacement for access controls on log storage.
+
+Read [Sensitive data and errors](docs/safety-and-troubleshooting.md) for redaction limits and safe logging guidance.
 
 ## API
 
