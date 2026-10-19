@@ -3,6 +3,7 @@ import { createDefaultTransports } from "./default-options.mjs";
 
 export const normalizeLoggerOptions = ({ level, transports, format, timestamp, keys }) => {
   if (format !== "text" && format !== "json") throw new TypeError("format must be text or json");
+  if (typeof timestamp !== "boolean") throw new TypeError("timestamp must be a boolean");
   const configuredTransports = transports ?? createDefaultTransports();
   if (!Array.isArray(configuredTransports)) throw new TypeError("transports must be an array");
   if (keys !== undefined && !Array.isArray(keys)) throw new TypeError("keys must be an array");

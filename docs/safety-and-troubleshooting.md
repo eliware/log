@@ -36,15 +36,16 @@ Check the final output from every custom transport.
 
 ## Correct errors
 
-| Error or symptom                 | Cause                                           | Action                                           |
-| -------------------------------- | ----------------------------------------------- | ------------------------------------------------ |
-| `Unknown logger level`           | The level is not a Winston npm level.           | Set a supported level such as `info` or `debug`. |
-| `format must be text or json`    | The format value is invalid.                    | Set `format` to `text` or `json`.                |
-| `transports must be an array`    | The transport value is not an array.            | Pass a Winston transport array.                  |
-| `keys must be an array`          | The key value is not an array.                  | Pass a string array.                             |
-| `keys must contain only strings` | A key is not a string.                          | Replace each non-string key.                     |
-| A `debug` record does not appear | The current level blocks it.                    | Set `level` to `debug` or `silly`.               |
-| A secret appears in a message    | String messages do not use key-based redaction. | Remove the secret before the call.               |
+| Error or symptom                 | Cause                                              | Action                                            |
+| -------------------------------- | -------------------------------------------------- | ------------------------------------------------- |
+| `Unknown logger level`           | Winston's npm level map does not define the level. | Set a configured level such as `info` or `debug`. |
+| `format must be text or json`    | The format value is invalid.                       | Set `format` to `text` or `json`.                 |
+| `timestamp must be a boolean`    | The timestamp value is not Boolean.                | Set `timestamp` to `true` or `false`.             |
+| `transports must be an array`    | The transport value is not an array.               | Pass a Winston transport array.                   |
+| `keys must be an array`          | The key value is not an array.                     | Pass a string array.                              |
+| `keys must contain only strings` | A key is not a string.                             | Replace each non-string key.                      |
+| A `debug` record does not appear | The current level blocks it.                       | Set `level` to `debug` or `silly`.                |
+| A secret appears in a message    | String messages do not use key-based redaction.    | Remove the secret before the call.                |
 
 ## Check output
 

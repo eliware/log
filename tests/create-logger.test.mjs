@@ -28,3 +28,14 @@ test("rejects an invalid configured level", () => {
     "Unknown logger level",
   );
 });
+
+test("accepts a custom level configured in Winston", () => {
+  const originalLevels = winston.config.npm.levels;
+  winston.config.npm.levels = { ...originalLevels, fatal: 0 };
+  try {
+    const logger = createLogger({ level: "fatal", transports: [] });
+    expect(logger.fatal).toEqual(expect.any(Function));
+  } finally {
+    winston.config.npm.levels = originalLevels;
+  }
+});

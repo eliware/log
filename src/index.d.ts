@@ -3,6 +3,7 @@
  * @param options Optional logger options.
  * @param options.level Log level (default: 'info'; invalid values throw a TypeError)
  * @param options.transports Array of winston transports (default: Console)
+ * @param options.timestamp Add a timestamp to JSON records. The value must be a boolean.
  * @returns winston.Logger
  *
  * Note: All logger methods accept either (message, metaObject) or (message, primitive/array),

@@ -26,8 +26,9 @@ const logger = createLogger({
 | `timestamp`  | boolean                 | `false`           | Add a timestamp field to JSON records when true.   |
 | `keys`       | string array            | `[]`              | Set property names that the formatter must redact. |
 
-Use one of these Winston npm levels: `error`, `warn`, `info`, `http`, `verbose`, `debug`, or `silly`.
-The logger rejects an unknown level with a `TypeError`.
+Winston provides these npm levels by default: `error`, `warn`, `info`, `http`, `verbose`, `debug`, and `silly`.
+The logger also accepts a custom level in Winston's npm level map.
+The logger rejects a level that the map does not define with a `TypeError`.
 The logger rejects a format other than `text` or `json`.
 The logger rejects a transport value that is not an array.
 The logger rejects a key list that is not an array of strings.
@@ -68,6 +69,7 @@ JSON records include metadata fields at the top level.
 
 Set `timestamp: true` to add a timestamp field to each JSON record.
 The text format does not add a timestamp.
+Pass only `true` or `false` for `timestamp`.
 The default value is `false`.
 
 ## Set redaction keys

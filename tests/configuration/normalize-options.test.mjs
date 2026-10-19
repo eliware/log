@@ -44,6 +44,18 @@ test("rejects invalid format and transports", () => {
   ).toThrow("level");
 });
 
+test("rejects a non-boolean timestamp option", () => {
+  expect(() =>
+    normalizeLoggerOptions({
+      level: "info",
+      transports: [],
+      format: "json",
+      timestamp: "true",
+      keys: [],
+    }),
+  ).toThrow("timestamp must be a boolean");
+});
+
 test("rejects non-string redaction keys", () => {
   expect(() =>
     normalizeLoggerOptions({
