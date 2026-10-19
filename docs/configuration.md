@@ -23,7 +23,7 @@ const logger = createLogger({
 | `level`      | string                  | `"info"`          | Set the lowest level that the logger writes.       |
 | `transports` | Winston transport array | Console transport | Set one or more output destinations.               |
 | `format`     | `"text"` or `"json"`    | `"text"`          | Select the record format.                          |
-| `timestamp`  | boolean                 | `false`           | Add a timestamp to each record when true.          |
+| `timestamp`  | boolean                 | `false`           | Add a timestamp field to JSON records when true.   |
 | `keys`       | string array            | `[]`              | Set property names that the formatter must redact. |
 
 Use one of these Winston npm levels: `error`, `warn`, `info`, `http`, `verbose`, `debug`, or `silly`.
@@ -66,7 +66,8 @@ JSON records include metadata fields at the top level.
 
 ## Add timestamps
 
-Set `timestamp: true` to add a timestamp to each record.
+Set `timestamp: true` to add a timestamp field to each JSON record.
+The text format does not add a timestamp.
 The default value is `false`.
 
 ## Set redaction keys
@@ -83,4 +84,6 @@ Add every key name that your application needs to redact.
 For example, include `token`, `access_token`, and `sessionId` when your data uses those names.
 
 The formatter checks property names. It does not scan text inside string messages.
+The logger does not use the default sensitive key list from `@eliware/redact`.
+Pass every property name that your application needs to redact.
 See [Sensitive data and errors](safety-and-troubleshooting.md) before you write sensitive data.

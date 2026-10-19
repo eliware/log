@@ -11,9 +11,13 @@ const value = { token: "example-token", count: 2n };
 console.log(safeSerialize(value));
 ```
 
-The helper returns JSON-safe values.
+The helper returns plain values and text labels for JSON output.
+It keeps `null`, Boolean, and number values.
 It writes BigInts as text with an `n` suffix.
-It writes `undefined`, functions, symbols, and buffers as text labels.
+It writes `undefined` as `[Undefined]`.
+It writes functions as `[Function: name]` and symbols as `[Symbol: description]`.
+It writes buffers as `[Buffer length=N]` without exposing buffer contents.
+
 It reads `name`, `message`, and `stack` fields from Error values.
 It also serializes enumerable custom Error fields.
 It applies redaction and output limits to those fields.
@@ -35,6 +39,8 @@ Pass an options object to set key names, a marker, or output limits.
 Key checks ignore uppercase and lowercase differences.
 If you set `keys`, that list replaces the default list.
 The direct `safeSerialize()` call uses the default sensitive key list when you omit options.
+The safe serializer always uses `[CIRCULAR]` for cycles.
+The `circularMarker` option does not change this marker.
 
 The default key names are `token`, `accessToken`, `authToken`, `authorization`, `cookie`, `set-cookie`, `proxy-authorization`, `password`, and `passwd`.
 They also include `secret`, `clientSecret`, `apiKey`, `api-key`, `accessKey`, `privateKey`, `passphrase`, `credential`, `webhook`, `signature`, `tlsKey`, and `tlsCert`.
@@ -42,13 +48,26 @@ They also include `secret`, `clientSecret`, `apiKey`, `api-key`, `accessKey`, `p
 ## Limits and markers
 
 The helper uses `[CIRCULAR]` for circular values.
-It uses `[TRUNCATED]` when it omits values or cuts a string.
-It uses `[UNSERIALIZABLE]` when it cannot serialize a value.
-It returns `{}` when it cannot read a retained object property.
+It uses `[TRUNCATED]` when a nested value exceeds `maxDepth` or the helper omits values.
+It uses `...[TRUNCATED]` when it cuts a long string and the marker fits.
+It uses `…` when the string limit is shorter than the marker.
 
-The root value starts at depth zero.
-The helper marks a child deeper than `maxDepth` as truncated.
-The helper adds a marker when it omits array items or object keys.
+It uses `[UNSERIALIZABLE]` when serialization fails.
+It returns `{}` when it cannot read a retained object property.
+It adds a `__truncated` property when it omits object keys.
+It adds `[TRUNCATED]` to an array when it omits array items.
+
+The helper counts the root value at depth zero.
+It truncates a child when its depth is greater than `maxDepth`.
+It floors finite fractional values for `maxDepth`, `maxKeys`, and `maxArray`.
+It changes negative limits to zero and uses defaults for non-finite limits.
+
+The helper reads enumerable own string-keyed object properties.
+It omits enumerable symbol-keyed object properties.
+It preserves sparse array holes and ignores inherited array indexes.
+It omits custom array properties.
+The helper has no total output length limit.
+The `maxString` option limits each string and primitive label.
 
 ## Redaction in logger formats
 
