@@ -1,10 +1,26 @@
 # Release Notes
 
-## 13.0.0 — 2026-10-17
+## 13.0.0 — 2026-10-19
 
 ### Changed
 
-- Clarified that safe serialization includes enumerable custom Error fields.
+- Update `@eliware/redact` to 13.0.0 and use its bounded safe serialization behavior.
+- Update `@eliware/test` to 13.0.0 and refresh locked dependency versions.
+- Clarify that JSON records support timestamps and text records do not.
+- Document configured Winston levels, root exports, package files, release tags, and serialization limits.
+- Remove the word `secure` from the package description.
+- Align GitHub workflows with the shared workflow rules. Use checkout v7 and full Git history for validation.
+- Rename the npm publication workflow to `npm.yaml` and align it with the canonical workflow.
+- Update Knit deployment to run `git pull`, `npm ci`, and `npm test` in `/eliware/log`.
+- Update the README, guides, specifications, and repository instructions for Convention 13.
+
+### Fixed
+
+- Make each serialized string and primitive label no longer than `maxString` characters. Count truncation markers as part of the limit.
+
+### Breaking changes
+
+- `createLogger()` throws a `TypeError` when `timestamp` is not a Boolean value.
 
 ## 12.0.0 — 2026-10-12
 
