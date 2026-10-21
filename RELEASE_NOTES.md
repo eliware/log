@@ -1,14 +1,17 @@
 # Release Notes
 
-## 14.0.0 — 2026-10-20
+## 14.0.0 — 2026-10-21
 
 ### Changed
 
-- Update `@eliware/redact` and `@eliware/test` to 14.0.0.
-- Refresh transitive dependency versions in `package-lock.json`.
-- Match the package and public specification versions to Convention 14.
-- Align repository instructions with Convention 14 requirements.
-- Re-export the public redaction functions and option types from the package root.
+- Update `@eliware/redact` and `@eliware/test` to 14.0.0. Refresh locked transitive dependency versions.
+- Match package metadata and the public specification version to Convention 14. Align repository guidance with its requirements.
+- Expand the Getting Started and API guides with package-root redaction exports. Remove duplicate README guide links.
+
+### Added
+
+- Re-export redaction functions and option types from the package root.
+- Add ESM and TypeScript consumer checks for the package-root functions and types.
 
 ## 13.0.0 — 2026-10-19
 
