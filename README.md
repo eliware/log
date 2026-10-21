@@ -74,15 +74,11 @@ Run `npm test` for aggregate validation. Run `npm run lint`, `npm run audit`, `n
 | `transports must be an array`              | The `transports` option is not an array.                          | Pass an array of Winston transports.              |
 | A log record is missing                    | The configured level filters it, or the transport changes output. | Check the level and inspect the transport output. |
 
-Read [Sensitive data and errors](docs/safety-and-troubleshooting.md) for more help.
-
 ## Security
 
 Set `keys` to the metadata property names that contain sensitive data. The logger does not redact string messages by property name. Remove secrets from messages before you log them.
 
 Inspect the final output from each custom transport. A transport can add fields or change a record. Do not use redaction or bounded serialization as a replacement for access controls on log storage.
-
-Read [Sensitive data and errors](docs/safety-and-troubleshooting.md) for redaction limits and safe logging guidance.
 
 ## API
 
