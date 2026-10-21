@@ -9,7 +9,7 @@
 
 ### Fixed
 
-- Preserve JSON metadata fields named `level` or `message`.
+- Allow metadata fields named `level` or `message` to replace the matching JSON fields.
 - Use the exported Winston transport type and import the serialization options used by the public declarations.
 - Declare `@types/node` so installed packages resolve Winston's declaration dependencies.
 - Check public declarations with `skipLibCheck` disabled.
