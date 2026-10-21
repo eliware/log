@@ -55,14 +55,23 @@ It does not send data to a remote system.
 ## Select an entry point
 
 Import `createLogger` to make a logger with custom options.
-Import the default `log` value for the default logger.
-Import the named `log` value for the same default logger.
+Import the default `log` value or named `log` value to use the default logger.
 Import `safeSerialize` to create a safe representation of a value.
+Import the Redact functions to redact structured values, headers, or text.
 
 ```js
-import log, { createLogger, log as namedLog, safeSerialize } from "@eliware/log";
+import log, {
+  createLogger,
+  log as namedLog,
+  redactHeaders,
+  redactText,
+  redactValue,
+  replaceLiteralSecret,
+  safeSerialize,
+} from "@eliware/log";
 ```
 
 The default and named `log` values refer to the same logger.
 See [Configure a logger](configuration.md) to set options.
 See [Write logs](write-logs.md) to set messages and metadata.
+See the [API reference](api-reference.md) for the redaction functions and option types.

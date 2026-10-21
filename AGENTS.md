@@ -2,7 +2,7 @@
 
 ## Project
 
-See README.md for the repository purpose, owner, scope, and boundaries.
+Maintain `@eliware/log`. See README.md for its purpose and owner.
 
 ## Scope and boundaries
 
@@ -10,11 +10,11 @@ Keep repository requirements in specs/directives.yaml.
 
 ## Layout
 
-Use README.md and specs/README.md to find maintained files.
+Use README.md and specs/README.md to find repository paths.
 
 ## Development
 
-Use Node.js 26 or later and native ESM for maintained JavaScript modules.
+Use Node.js 26 or later. Use native ESM for maintained JavaScript modules.
 
 ## Validation
 
@@ -26,11 +26,11 @@ Run npm run format:check to check formatting.
 
 ## Security
 
-Keep credentials, secret values, private data, and runtime state out of Git.
+Do not commit credentials, secrets, or private data.
 
 ## Changes
 
-Keep each document in the repository that owns its content. Update its nearest index when you add a document.
+Update RELEASE_NOTES.md for each user-visible change.
 
 ## Library
 

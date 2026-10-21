@@ -84,11 +84,29 @@ See [Safe serialization](safe-serialization.md) for options, limits, and markers
 The package root also exports the stable functions from `@eliware/redact`.
 Use these functions when an application needs redaction outside logger output.
 
+```js
+import {
+  createPolicy,
+  defaultPolicy,
+  redactHeaders,
+  redactText,
+  redactValue,
+  replaceLiteralSecret,
+} from "@eliware/log";
+
+const policy = createPolicy({ keys: [...defaultPolicy.keys, "sessionId"] });
+const cleanValue = redactValue({ sessionId: "example-value" }, policy);
+const cleanHeaders = redactHeaders({ Authorization: "Bearer example-token" });
+const cleanText = redactText("token=example-token");
+const cleanMessage = replaceLiteralSecret("value=example-secret", "example-secret");
+```
+
 ### `createPolicy(options)` and `defaultPolicy`
 
 Call `createPolicy()` to make a read-only policy from redaction options.
 Read `defaultPolicy` to use the package default keys and marker.
 Pass the policy to a redaction function that accepts policy options.
+The policy stores key names in a read-only set.
 
 ### `redactValue(value, options)`
 
@@ -96,23 +114,52 @@ Return a redacted copy of a structured value.
 The function checks property names and does not scan text inside string values.
 It supports objects, arrays, and Error values.
 It applies the configured traversal limits.
+It returns primitive values without changing them.
 
 ### `redactHeaders(headers, options)`
 
 Redact sensitive header values in an object, an array of name-value pairs, or an object with an `entries()` method.
 The function keeps header names for object input and keeps duplicate names for array input.
+The function returns lowercase header names for `entries()` input and keeps the last duplicate value.
+Header name checks ignore uppercase and lowercase differences.
 
 ### `redactText(value, options)`
 
 Convert a value to text and redact supported credential patterns, configured key names, and supplied literal secrets.
 The function returns an empty string for `null` and `undefined` values.
-It applies an output length limit.
+It applies built-in rules to authorization values, key assignments, provider tokens, JSON Web Tokens, and key material.
+It applies a default output limit of 10,000 characters.
+Set `maxOutputLength` to change the limit.
+The built-in rules can miss secrets or redact text that is not secret.
 
 ### `replaceLiteralSecret(value, secret, marker)`
 
 Replace each exact, case-sensitive occurrence of one literal secret.
 The function converts `null` and `undefined` values to empty text.
 If the secret is empty, `null`, or `undefined`, the function leaves the text unchanged.
+The default marker is `[REDACTED]`.
+
+## Redaction option types
+
+`RedactionPolicy` accepts `keys`, the `redactKeys` alias, `marker`, and `circularMarker`.
+The default marker is `[REDACTED]`.
+`circularMarker` applies to `redactValue()` only.
+The key list defaults to the sensitive names listed in [Safe serialization](safe-serialization.md).
+Set `keys` or `redactKeys` to replace that list.
+
+`StructuredRedactionOptions` adds `maxDepth`, `maxKeys`, and `maxArray` to `RedactionPolicy`.
+Their defaults are 20, 1,000, and 1,000.
+These limits control depth, retained properties, and retained array items.
+
+`TextRedactionOptions` adds `secrets` and `maxOutputLength` to `RedactionPolicy`.
+Pass one secret string or an iterable of secret strings in `secrets`.
+The function matches supplied secrets exactly and keeps letter case.
+The text output limit defaults to 10,000 characters.
+Set `marker` to change replacements for configured keys and supplied secrets.
+
+`SerializationOptions` adds `maxString` to the structured traversal limits.
+Its `maxString` default is 10,000 characters.
+See [Safe serialization](safe-serialization.md) for the full serialization rules.
 
 The package exports the `RedactionPolicy`, `SerializationOptions`, `StructuredRedactionOptions`, and `TextRedactionOptions` types.
 `RedactionOptions` remains an alias for `SerializationOptions`.
@@ -145,7 +192,11 @@ logger.info("Serialized a value", { value });
 The declarations include these public types:
 
 - `LoggerWithConfiguredLevels`
+- `RedactionPolicy`
 - `RedactionOptions`
+- `SerializationOptions`
 - `SafeSerializedValue`
+- `StructuredRedactionOptions`
+- `TextRedactionOptions`
 
 Import values and types from `@eliware/log`.
