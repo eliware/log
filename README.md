@@ -86,7 +86,9 @@ Read [Sensitive data and errors](docs/safety-and-troubleshooting.md) for redacti
 
 ## API
 
-Import `createLogger`, `safeSerialize`, the named `log`, and the default logger from the package root. Read the [API reference](docs/api-reference.md) for options, declarations, and methods.
+Import the logging and redaction functions from the package root. The root also exports redaction option types and the existing `RedactionOptions` alias.
+
+Read the [API reference](docs/api-reference.md) for function behavior, options, declarations, and methods.
 
 ## Packaging
 

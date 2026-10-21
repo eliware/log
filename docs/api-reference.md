@@ -4,7 +4,17 @@ Import public functions from `@eliware/log`.
 The package supports native ESM.
 
 ```js
-import log, { createLogger, log as namedLog, safeSerialize } from "@eliware/log";
+import log, {
+  createLogger,
+  createPolicy,
+  defaultPolicy,
+  log as namedLog,
+  redactHeaders,
+  redactText,
+  redactValue,
+  replaceLiteralSecret,
+  safeSerialize,
+} from "@eliware/log";
 ```
 
 The default `log` export and named `log` export refer to the same logger.
@@ -69,6 +79,45 @@ The function accepts `RedactionOptions` from `@eliware/redact`.
 The `SafeSerializedValue` type describes its recursive output shape.
 See [Safe serialization](safe-serialization.md) for options, limits, and markers.
 
+## Redact functions
+
+The package root also exports the stable functions from `@eliware/redact`.
+Use these functions when an application needs redaction outside logger output.
+
+### `createPolicy(options)` and `defaultPolicy`
+
+Call `createPolicy()` to make a read-only policy from redaction options.
+Read `defaultPolicy` to use the package default keys and marker.
+Pass the policy to a redaction function that accepts policy options.
+
+### `redactValue(value, options)`
+
+Return a redacted copy of a structured value.
+The function checks property names and does not scan text inside string values.
+It supports objects, arrays, and Error values.
+It applies the configured traversal limits.
+
+### `redactHeaders(headers, options)`
+
+Redact sensitive header values in an object, an array of name-value pairs, or an object with an `entries()` method.
+The function keeps header names for object input and keeps duplicate names for array input.
+
+### `redactText(value, options)`
+
+Convert a value to text and redact supported credential patterns, configured key names, and supplied literal secrets.
+The function returns an empty string for `null` and `undefined` values.
+It applies an output length limit.
+
+### `replaceLiteralSecret(value, secret, marker)`
+
+Replace each exact, case-sensitive occurrence of one literal secret.
+The function converts `null` and `undefined` values to empty text.
+If the secret is empty, `null`, or `undefined`, the function leaves the text unchanged.
+
+The package exports the `RedactionPolicy`, `SerializationOptions`, `StructuredRedactionOptions`, and `TextRedactionOptions` types.
+`RedactionOptions` remains an alias for `SerializationOptions`.
+Read the [safe data guide](safety-and-troubleshooting.md) before you share redacted output.
+
 ## TypeScript
 
 The package provides declarations for its root import.
@@ -78,8 +127,12 @@ Use this example to import the public types:
 import log, { createLogger, safeSerialize } from "@eliware/log";
 import type {
   LoggerWithConfiguredLevels,
+  RedactionPolicy,
   RedactionOptions,
+  SerializationOptions,
   SafeSerializedValue,
+  StructuredRedactionOptions,
+  TextRedactionOptions,
 } from "@eliware/log";
 
 const logger: LoggerWithConfiguredLevels = createLogger({ format: "json" });

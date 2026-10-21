@@ -22,12 +22,32 @@ export declare function createLogger(options?: {
   error(message: unknown, meta?: unknown, ...args: unknown[]): import("winston").Logger;
 };
 
+export {
+  createPolicy,
+  defaultPolicy,
+  redactHeaders,
+  redactText,
+  redactValue,
+  replaceLiteralSecret,
+} from "@eliware/redact";
+
 /** Runtime-configured Winston levels are available dynamically; standard levels are typed explicitly above and custom levels remain runtime-discovered. */
 export type LoggerWithConfiguredLevels = import("winston").Logger & { [level: string]: unknown };
 
 /** Recursive JSON-safe result returned by safeSerialize. */
 export type SafeSerializedValue =
   null | boolean | number | string | SafeSerializedValue[] | { [key: string]: SafeSerializedValue };
+
+export type {
+  RedactionPolicy,
+  SerializationOptions,
+  StructuredRedactionOptions,
+  TextRedactionOptions,
+} from "@eliware/redact";
+
+/** Options accepted by safeSerialize. This alias preserves the original @eliware/log type name. */
+export type RedactionOptions = SerializationOptions;
+
 /**
  * Safely serializes metadata without invoking toJSON.
  * Error values include name, message, stack, and enumerable custom properties, subject to redaction and limits.
@@ -36,8 +56,6 @@ export declare function safeSerialize(
   value: unknown,
   options?: RedactionOptions,
 ): SafeSerializedValue;
-
-export type RedactionOptions = import("@eliware/redact").SerializationOptions;
 
 /**
  * Default logger instance.
