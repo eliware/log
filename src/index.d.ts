@@ -1,3 +1,5 @@
+import type { SerializationOptions as RedactSerializationOptions } from "@eliware/redact";
+
 /**
  * Factory to create a Winston logger instance.
  * @param options Optional logger options.
@@ -11,7 +13,7 @@
  */
 export declare function createLogger(options?: {
   level?: string;
-  transports?: import("winston").Transport[];
+  transports?: import("winston").transport[];
   format?: "text" | "json";
   timestamp?: boolean;
   keys?: string[];
@@ -46,7 +48,7 @@ export type {
 } from "@eliware/redact";
 
 /** Options accepted by safeSerialize. This alias preserves the original @eliware/log type name. */
-export type RedactionOptions = SerializationOptions;
+export type RedactionOptions = RedactSerializationOptions;
 
 /**
  * Safely serializes metadata without invoking toJSON.

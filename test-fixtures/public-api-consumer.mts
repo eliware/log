@@ -1,4 +1,5 @@
 import log, {
+  createLogger,
   createPolicy,
   defaultPolicy,
   redactHeaders,
@@ -8,6 +9,7 @@ import log, {
   safeSerialize,
 } from "@eliware/log";
 import type {
+  LoggerWithConfiguredLevels,
   RedactionPolicy,
   RedactionOptions,
   SafeSerializedValue,
@@ -17,6 +19,8 @@ import type {
 } from "@eliware/log";
 
 const policyOptions: RedactionPolicy = { keys: [...defaultPolicy.keys, "sessionId"] };
+const logger = createLogger({ transports: [] });
+const configuredLog: LoggerWithConfiguredLevels = log;
 const serializationOptions: SerializationOptions = { ...policyOptions, maxDepth: 5 };
 const structuredOptions: StructuredRedactionOptions = { ...policyOptions, maxKeys: 10 };
 const textOptions: TextRedactionOptions = { ...policyOptions, secrets: ["example-secret"] };
@@ -29,3 +33,5 @@ redactText("token=example-token", textOptions);
 redactValue({ sessionId: "example-value" }, policy);
 replaceLiteralSecret("value=example-secret", "example-secret");
 log.info("Public API type check", { serialized });
+logger.info("Configured logger type check", { serialized });
+configuredLog.info("Configured levels type check", { serialized });

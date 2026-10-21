@@ -36,6 +36,7 @@
   ],
   "scripts": {
     "test": "eliware-test",
+    "posttest": "node test-fixtures/packed-types.mjs",
     "lint": "eliware-test --lint",
     "audit": "eliware-test --audit",
     "format": "eliware-test --format",
@@ -48,6 +49,7 @@
   },
   "dependencies": {
     "@eliware/redact": "^14.0.0",
+    "@types/node": "^26.6.5",
     "winston": "^3.19.0"
   },
   "devDependencies": {
