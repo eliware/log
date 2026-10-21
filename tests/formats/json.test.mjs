@@ -18,6 +18,29 @@ test("emits JSON metadata with redaction and timestamps", async () => {
   expect(record.timestamp).toBeDefined();
 });
 
+test("preserves metadata that uses reserved JSON field names", async () => {
+  const stream = new PassThrough();
+  const outputReady = new Promise((resolve) => stream.once("data", resolve));
+  const logger = winston.createLogger({
+    format: jsonFormat({ keys: [] }, false),
+    transports: [new winston.transports.Stream({ stream })],
+  });
+  logger.info("original message", { level: "custom level", message: "custom message" });
+  const record = JSON.parse((await outputReady).toString().trim());
+  expect(record.level).toBe("custom level");
+  expect(record.message).toBe("custom message");
+});
+
+test("ignores non-object splat arguments as metadata", () => {
+  const format = jsonFormat({ keys: [] }, false);
+  const result = format.transform({
+    level: "info",
+    message: "hello",
+    [Symbol.for("splat")]: ["interpolation value"],
+  });
+  expect(JSON.parse(result[Symbol.for("message")])).toEqual({ level: "info", message: "hello" });
+});
+
 test("uses a safe fallback when JSON output serialization fails", () => {
   const original = JSON.stringify;
   JSON.stringify = () => {

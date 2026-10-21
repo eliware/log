@@ -7,7 +7,14 @@ const sanitizedSymbol = Symbol("sanitized");
 export const jsonFormat = (redact, timestamp) => {
   // Sanitize eagerly so every emitted record has deterministic, transport-independent metadata.
   const sanitize = winston.format((info) => {
-    const { level, message, ...metadata } = info;
+    const { level, message } = info;
+    const splatMetadata = (info[Symbol.for("splat")] ?? []).flatMap((entry) =>
+      entry && typeof entry === "object" ? Object.entries(entry) : [],
+    );
+    const infoMetadata = Object.entries(info).filter(
+      ([key]) => key !== "level" && key !== "message",
+    );
+    const metadata = Object.fromEntries([...splatMetadata, ...infoMetadata]);
     const safeMessage = typeof message === "string" ? message : safeSerialize(message, redact);
     const sanitized = { level, message: safeMessage, ...safeSerialize(metadata, redact) };
     info[sanitizedSymbol] = sanitized;
