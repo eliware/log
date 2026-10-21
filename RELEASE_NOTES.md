@@ -1,5 +1,14 @@
 # Release Notes
 
+## 14.0.0 — 2026-10-20
+
+### Changed
+
+- Update `@eliware/redact` and `@eliware/test` to 14.0.0.
+- Refresh transitive dependency versions in `package-lock.json`.
+- Match the package and public specification versions to Convention 14.
+- Align repository instructions with Convention 14 requirements.
+
 ## 13.0.0 — 2026-10-19
 
 ### Changed

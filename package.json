@@ -1,6 +1,6 @@
 {
   "name": "@eliware/log",
-  "version": "13.0.0",
+  "version": "14.0.0",
   "type": "module",
   "description": "Structured ESM logging for Node.js with redaction and defensive serialization, backed by Winston.",
   "keywords": [
@@ -47,11 +47,11 @@
     "node": ">=26"
   },
   "dependencies": {
-    "@eliware/redact": "^13.0.0",
+    "@eliware/redact": "^14.0.0",
     "winston": "^3.19.0"
   },
   "devDependencies": {
-    "@eliware/test": "^13.0.0",
+    "@eliware/test": "^14.0.0",
     "typescript": "^7.0.2"
   },
   "jest": {

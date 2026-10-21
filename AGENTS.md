@@ -2,11 +2,15 @@
 
 ## Project
 
+See README.md for the repository purpose, owner, scope, and boundaries.
+
 ## Scope and boundaries
 
-Keep requirements in their authoritative specifications.
+Keep repository requirements in specs/directives.yaml.
 
 ## Layout
+
+Use README.md and specs/README.md to find maintained files.
 
 ## Development
 
@@ -14,15 +18,19 @@ Use Node.js 26 or later and native ESM for maintained JavaScript modules.
 
 ## Validation
 
-Run `npm test` for aggregate validation.
-Run `npm run lint` for lint checks.
-Run `npm run audit` for dependency checks.
-Run `npm run format` to format files.
-Run `npm run format:check` to check formatting.
+Run npm test for aggregate validation.
+Run npm run lint for lint checks.
+Run npm run audit for dependency checks.
+Run npm run format to format files.
+Run npm run format:check to check formatting.
 
 ## Security
 
+Keep credentials, secret values, private data, and runtime state out of Git.
+
 ## Changes
+
+Keep each document in the repository that owns its content. Update its nearest index when you add a document.
 
 ## Library
 
@@ -34,4 +42,4 @@ Run the full `npm test` suite for final validation before a commit, milestone, o
 
 ## npm publication
 
-Publish only after approval through the Operations release handoff.
+Run `npm run pack` to check package contents. Publish only after approved release steps.
