@@ -75,7 +75,7 @@ The result can contain JSON-safe values or text labels for special values.
 const clean = safeSerialize({ token: "example-token", count: 2n });
 ```
 
-The function accepts `RedactionOptions` from `@eliware/redact`.
+The function accepts `RedactionOptions`, which aliases `SerializationOptions`.
 The `SafeSerializedValue` type describes its recursive output shape.
 See [Safe serialization](safe-serialization.md) for options, limits, and markers.
 
@@ -116,6 +116,10 @@ It supports objects, arrays, and Error values.
 It applies the configured traversal limits.
 It returns primitive values without changing them.
 
+For arrays, `maxKeys` limits non-sensitive index and non-index property values together.
+The function marks sensitive array properties without reading their values after the limit is reached.
+It adds `[TRUNCATED]` when it omits array values or properties.
+
 ### `redactHeaders(headers, options)`
 
 Redact sensitive header values in an object, an array of name-value pairs, or an object with an `entries()` method.
@@ -130,6 +134,12 @@ The function returns an empty string for `null` and `undefined` values.
 It applies built-in rules to authorization values, key assignments, provider tokens, JSON Web Tokens, and key material.
 It applies a default output limit of 10,000 characters.
 Set `maxOutputLength` to change the limit.
+
+The function limits input before it applies redaction rules.
+It uses bounded lookahead to redact a configured secret when the input limit cuts through it.
+It adds `[TRUNCATED]` when it cuts output.
+If the limit is shorter than that marker, it returns `…`.
+
 The built-in rules can miss secrets or redact text that is not secret.
 
 ### `replaceLiteralSecret(value, secret, marker)`
@@ -182,11 +192,13 @@ import type {
   TextRedactionOptions,
 } from "@eliware/log";
 
-const logger: LoggerWithConfiguredLevels = createLogger({ format: "json" });
+const logger = createLogger({ format: "json" });
+const configuredLog: LoggerWithConfiguredLevels = log;
 const options: RedactionOptions = { keys: ["token"] };
 const value: SafeSerializedValue = safeSerialize({ token: "example" }, options);
 log.info("Created a logger", { ready: true });
 logger.info("Serialized a value", { value });
+configuredLog.info("Configured level example", { value });
 ```
 
 The declarations include these public types:

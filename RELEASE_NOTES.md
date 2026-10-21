@@ -1,5 +1,22 @@
 # Release Notes
 
+## 15.0.0 — 2026-10-21
+
+### Changed
+
+- Update `@eliware/redact` and `@eliware/test` to 15.0.0. Refresh locked dependencies and align the package and specification versions with Convention 15.
+- Document Redact 15 text truncation and array property limits. Correct the TypeScript logger example.
+
+### Fixed
+
+- Use the exported Winston transport type and import the serialization options used by the public declarations.
+- Declare `@types/node` so installed packages resolve Winston's declaration dependencies.
+- Check public declarations with `skipLibCheck` disabled.
+
+### Added
+
+- Add a packed-package check that compiles documented imports in a strict TypeScript consumer outside the repository.
+
 ## 14.0.0 — 2026-10-21
 
 ### Changed
