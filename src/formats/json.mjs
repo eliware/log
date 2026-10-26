@@ -16,7 +16,12 @@ export const jsonFormat = (redact, timestamp) => {
     );
     const metadata = Object.fromEntries([...splatMetadata, ...infoMetadata]);
     const safeMessage = typeof message === "string" ? message : safeSerialize(message, redact);
-    const sanitized = { level, message: safeMessage, ...safeSerialize(metadata, redact) };
+    const safeMetadata = safeSerialize(metadata, redact);
+    const hasReservedField =
+      Object.hasOwn(safeMetadata, "level") || Object.hasOwn(safeMetadata, "message");
+    const sanitized = hasReservedField
+      ? { level, message: safeMessage, metadata: safeMetadata }
+      : { level, message: safeMessage, ...safeMetadata };
     info[sanitizedSymbol] = sanitized;
     return info;
   });

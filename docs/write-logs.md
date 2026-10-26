@@ -61,6 +61,7 @@ See [Safe serialization](safe-serialization.md) for value rules.
 The JSON format writes one JSON object for each record.
 It uses `level` and `message` fields.
 It adds metadata fields at the top level.
+If metadata uses `level` or `message`, the formatter keeps the log fields and places all metadata under `metadata`.
 It adds `timestamp` when you set `timestamp: true`.
 
 ```json

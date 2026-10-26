@@ -1,5 +1,17 @@
 # Release Notes
 
+## 15.0.1 — 2026-10-26
+
+### Changed
+
+- Update the package to 15.0.1 and refresh dependencies to the latest available versions.
+- Keep the record's `level` and `message` fields when metadata uses those names. Put all metadata in `metadata`.
+- Document the JSON metadata behavior for reserved field names.
+
+### Fixed
+
+- Prevent metadata fields from replacing the actual JSON log level or message.
+
 ## 15.0.0 — 2026-10-21
 
 ### Changed

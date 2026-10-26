@@ -18,17 +18,26 @@ test("emits JSON metadata with redaction and timestamps", async () => {
   expect(record.timestamp).toBeDefined();
 });
 
-test("preserves metadata that uses reserved JSON field names", async () => {
+test("preserves log fields and metadata that uses reserved JSON field names", async () => {
   const stream = new PassThrough();
   const outputReady = new Promise((resolve) => stream.once("data", resolve));
   const logger = winston.createLogger({
     format: jsonFormat({ keys: [] }, false),
     transports: [new winston.transports.Stream({ stream })],
   });
-  logger.info("original message", { level: "custom level", message: "custom message" });
+  logger.info("original message", {
+    level: "custom level",
+    message: "custom message",
+    requestId: "demo",
+  });
   const record = JSON.parse((await outputReady).toString().trim());
-  expect(record.level).toBe("custom level");
-  expect(record.message).toBe("custom message");
+  expect(record.level).toBe("info");
+  expect(record.message).toBe("original message custom message");
+  expect(record.metadata).toEqual({
+    level: "custom level",
+    message: "custom message",
+    requestId: "demo",
+  });
 });
 
 test("ignores non-object splat arguments as metadata", () => {
