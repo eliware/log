@@ -63,7 +63,8 @@ Examine custom transports if they add or change record data.
 Use `text` to write one readable line for each record.
 Use `json` to write one JSON object for each record.
 Both formats include the level and message.
-JSON records include metadata fields at the top level.
+JSON records include ordinary metadata fields at the top level.
+If metadata contains `level` or `message`, the formatter keeps the log fields and puts all metadata in `metadata`.
 
 ## Add timestamps
 
